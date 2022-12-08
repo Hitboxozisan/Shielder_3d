@@ -1,5 +1,6 @@
 #include "Pch.h"
 #include "Player.h"
+#include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
 
@@ -27,10 +28,8 @@ Player::~Player()
 /// </summary>
 void Player::Initialize()
 {
+	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::PLAYER));
-
-	
-
 }
 
 /// <summary>
@@ -101,6 +100,7 @@ void Player::Releaseinvincible()
 void Player::UpdateNomal()
 {
 	MoveFinish();
+
 }
 
 /// <summary>
@@ -116,6 +116,7 @@ void Player::UpdateDead()
 /// </summary>
 void Player::InputAction()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 #ifdef DEBUG
 	// Pキーで死亡
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_P))
@@ -125,12 +126,20 @@ void Player::InputAction()
 
 #endif // DEBUG
 
-	// 左右移動
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A) && nextPosition.x >= SCREEN_LEFTMOST)
+	// 前後左右移動
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
+	{
+		inputDirection += PROGRESS * speed * deltaTime;
+	}
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
+	{
+		inputDirection += RECESSION * speed * deltaTime;
+	}
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
 	{
 		inputDirection += LEFT * speed * deltaTime;
 	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D) && nextPosition.x <= SCREEN_RIGHTMOST)
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D))
 	{
 		inputDirection += RIGHT * speed * deltaTime;
 	}
@@ -145,22 +154,22 @@ void Player::InputAction()
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT) ||
 		KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))
 	{
-		speed = DEFENSE_SPEED;	// 移動速度変更
-		CreateShield();			// 盾生成
+		//speed = DEFENSE_SPEED;	// 移動速度変更
+		//CreateShield();			// 盾生成
 
-		pUpdate = &Player::UpdateDefence;
+		//pUpdate = &Player::UpdateDefence;
 	}
 	else
 	{
-		speed = NORMAL_SPEED;	// 
+		//speed = NORMAL_SPEED;	// 
 
-		shield->Deactivate();	//盾を消滅させる
-		pUpdate = &Player::UpdateNormal;
+		//shield->Deactivate();	//盾を消滅させる
+		//pUpdate = &Player::UpdateNormal;
 	}
 
 	// 回復
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_R))
 	{
-		Recovery();
+		//Recovery();
 	}
 }

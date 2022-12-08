@@ -19,6 +19,7 @@ const int POSITION_CENTER = (SCREEN_RIGHTMOST - SCREEN_LEFTMOST) / 2;
 
 const VECTOR ZERO_VECTOR = { 0.0f, 0.0f, 0.0f };	// ゼロベクトル
 
-
-const VECTOR RIGHT = { 1.0f, 0.0f, 0.0f };			// 右
-const VECTOR LEFT = { -1.0f, 0.0f, 0.0f };			// 左
+const VECTOR PROGRESS  = { 0.0f, 0.0f, 1.0f };		// 前
+const VECTOR RECESSION = { 0.0f, 0.0f, -1.0f };		// 後
+const VECTOR RIGHT     = { 1.0f, 0.0f, 0.0f };		// 右
+const VECTOR LEFT	   = { -1.0f, 0.0f, 0.0f };		// 左
