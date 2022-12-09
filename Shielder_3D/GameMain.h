@@ -5,21 +5,8 @@
 #include <list>
 #include <string>
 
-class Camera;
 class Player;
-class Enemy;
-class Character;
-class HitChecker;
-class Bullet;
-class BulletCreater;
-class Background;
-class BackgroundMeteor;
-class Field;
-class ScreenBand;
-class EffectManager;
-class GuardEffect;
-class UiManager;
-class Result;
+class CameraManager;
 
 class GameMain final : public SceneBase
 {
@@ -48,11 +35,6 @@ private:
 	GameMain(const GameMain&);
 	void operator=(const GameMain&);
 
-	//ファイルパス
-	static const std::string  IMAGE_FOLDER_PATH;
-	static const std::string  RESULT_PATH;
-	static const std::string  FILENAME_EXTENSION;
-
 	static const int   PLAYER_AMOUNT;
 	static const int   ENEMY_AMOUNT;
 	static const int   CHARACTER_AMOUNT;
@@ -61,17 +43,8 @@ private:
 	
 	State state;
 
-	//Camera* camera;
-	//Character** character;
-	//Background* background;
-	//Field* field;
-	//ScreenBand* screenBand;
-	//HitChecker* hitchecker;
-	//BulletCreater* bulletCreater;
-	//GuardEffect* guardEffect;
-	//EffectManager* effectManager;
-	//UiManager* uiManager;
-	//Result* result;
+	Player *player;
+	CameraManager *cameraManager;
 
 	//std::vector<BackgroundMeteor*> activeBackgroundMeteor;
 	//std::vector<BackgroundMeteor*> deactiveBackgroundMeteor;

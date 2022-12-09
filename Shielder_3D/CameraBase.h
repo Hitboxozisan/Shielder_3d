@@ -2,23 +2,28 @@
 
 class CameraManager;
 
-//-----------------------------------------------------------------------------
-// カメラベースクラス
-//-----------------------------------------------------------------------------
-class Camera
+/// <summary>
+/// カメラベースクラス
+/// </summary>
+class CameraBase
 {
 public:
-	Camera(CameraManager* const cameraManager);
-	virtual ~Camera();
+	CameraBase(CameraManager* const cameraManager);
+	virtual ~CameraBase();
 
 	virtual void Initialize() = 0;		// 初期化処理
 	virtual void Fainalize() = 0;		// 終了処理
 	virtual void Activate() = 0;		// 活性化処理
 	virtual void Deactivate() = 0;		// 非活性化処理
 	virtual void Update() = 0;			// 更新処理
-	virtual void Draw() = 0;			// 描画処理
 
-	int GetId();			// 識別番号を返す
+	void MoveFinish();					// 移動予定地に実際に移動する
+
+	const int GetId() const;			// 識別番号を返す
+	const VECTOR GetPosition() const;	// 現在位置を返す
+	const VECTOR GetDirection() const;	// 現在の向きを返す
+
+	void DebugMoveCamera();				// カメラの位置・向きを動かす
 
 protected:
 	CameraManager* parent;	// カメラマネージャーのポインタ
@@ -32,9 +37,12 @@ protected:
 	VECTOR prevDirection;	// 前フレームでの向き
 
 private:
-	Camera();						// デフォルトコンストラクタ
-	Camera(const Camera&);			// コピーコンストラクタ
-	void operator=(const Camera&);	// 代入演算子
+	CameraBase();						// デフォルトコンストラクタ
+	CameraBase(const CameraBase&);		// コピーコンストラクタ
+	void operator=(const CameraBase&);	// 代入演算子
 
+	static const float SPEED;
+
+	float speed;						// 移動速度
 };
 

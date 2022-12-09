@@ -27,6 +27,9 @@
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{fb274fc0-2768-468d-a312-ed10d760428c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Debug">
+      <UniqueIdentifier>{2c995fa6-64a2-4854-920f-d90aebf3e582}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,7 +59,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="CameraBase.cpp">
       <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
     <ClCompile Include="CameraLockOn.cpp">
@@ -89,6 +92,12 @@
     <ClCompile Include="Random.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
+    <ClCompile Include="WriteLineToField.cpp">
+      <Filter>ソース ファイル\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMenu.cpp">
+      <Filter>ソース ファイル\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
@@ -118,7 +127,7 @@
     <ClInclude Include="Player.h">
       <Filter>ソース ファイル\Character</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="CameraBase.h">
       <Filter>ソース ファイル\Camera</Filter>
     </ClInclude>
     <ClInclude Include="CameraLockOn.h">
@@ -150,6 +159,12 @@
     </ClInclude>
     <ClInclude Include="Random.h">
       <Filter>ソース ファイル\System</Filter>
+    </ClInclude>
+    <ClInclude Include="WriteLineToField.h">
+      <Filter>ソース ファイル\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMenu.h">
+      <Filter>ソース ファイル\Debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ public:
 	{
 		TITLE = 0,	//タイトル画面
 		GAME_MAIN,	//ゲーム画面
-		RESULT,		//リザルト画面
+		//RESULT,		//リザルト画面
 		END			//終了する　兼　シーンの個数
 	};
 

@@ -11,8 +11,8 @@ public:
 	inline float GetDeltaTime() { return deltaTime; }
 
 private:
-	float nowCount;
-	float prevCount;
+	int nowCount;
+	int prevCount;
 	float deltaTime;
 	bool  isSlow;
 };

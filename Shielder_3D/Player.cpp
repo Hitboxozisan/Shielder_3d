@@ -6,6 +6,8 @@
 
 const VECTOR Player::INITIAL_POSITION  = VGet(500.0f, 0.0f, 100.0f);
 const VECTOR Player::INITIAL_DIRECTION = VGet(0.0f, 0.0f, 1.0f);
+const VECTOR Player::INITIAL_SCALE = VGet(0.5f, 0.5f, 0.5f);
+const float  Player::NORMAL_SPEED = 100.0f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -30,6 +32,7 @@ void Player::Initialize()
 {
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::PLAYER));
+	MV1SetScale(modelHandle, INITIAL_SCALE);
 }
 
 /// <summary>
@@ -52,9 +55,15 @@ void Player::Activate()
 	direction = INITIAL_DIRECTION;
 	nextDirection = direction;
 	prevDirection = direction;
+	speed = NORMAL_SPEED;
+	noDrawFrame = false;
 
 	// 状態を NORMAL に
 	state = NORMAL;
+	pUpdate = &Player::UpdateNomal;
+
+	// モデルを初期位置に配置
+	MV1SetPosition(modelHandle, position);
 }
 
 /// <summary>
@@ -69,6 +78,10 @@ void Player::Deactivate()
 /// </summary>
 void Player::Update()
 {
+	if (pUpdate != nullptr)
+	{
+		(this->*pUpdate)();		// 状態ごとの更新処理
+	}
 
 }
 
@@ -77,6 +90,13 @@ void Player::Update()
 /// </summary>
 void Player::Draw()
 {
+	// 描画しないフレームなら描画しない
+	if (noDrawFrame || state == DEAD)
+	{
+		return;
+	}
+
+	MV1DrawModel(modelHandle);
 }
 
 /// <summary>
@@ -99,8 +119,9 @@ void Player::Releaseinvincible()
 /// </summary>
 void Player::UpdateNomal()
 {
+	Move();
 	MoveFinish();
-
+	InputAction();
 }
 
 /// <summary>
@@ -112,11 +133,41 @@ void Player::UpdateDead()
 }
 
 /// <summary>
+/// 移動処理
+/// </summary>
+void Player::Move()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
+	// 入力がないなら停止する
+	if (VSquareSize(inputDirection) != 0.0f)
+	{
+		nextDirection = VNorm(inputDirection);
+	}
+	else
+	{
+		nextDirection = inputDirection;
+	}
+
+	nextPosition = VAdd(position, VScale(nextDirection, speed) * deltaTime);
+}
+
+/// <summary>
+/// 
+/// </summary>
+void Player::MoveFinish()
+{
+
+}
+
+/// <summary>
 /// 入力処理
 /// </summary>
 void Player::InputAction()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	inputDirection = ZERO_VECTOR;
+
 #ifdef DEBUG
 	// Pキーで死亡
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_P))
@@ -127,11 +178,11 @@ void Player::InputAction()
 #endif // DEBUG
 
 	// 前後左右移動
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_W))
 	{
 		inputDirection += PROGRESS * speed * deltaTime;
 	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_S))
 	{
 		inputDirection += RECESSION * speed * deltaTime;
 	}

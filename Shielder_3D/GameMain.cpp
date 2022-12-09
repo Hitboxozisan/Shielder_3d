@@ -9,12 +9,9 @@
 #include "SceneManager.h"
 #include "Player.h"
 #include "Character.h"
-#include "Camera.h"
+#include "CameraBase.h"
+#include "CameraManager.h"
 #include "ModelManager.h"
-
-const string GameMain::IMAGE_FOLDER_PATH  = "Data/Image/";
-const string GameMain::RESULT_PATH		  = "Result";
-const string GameMain::FILENAME_EXTENSION = ".png";
 
 const int	GameMain::PLAYER_AMOUNT     = 1;
 const int	GameMain::ENEMY_AMOUNT      = 1;
@@ -40,7 +37,11 @@ GameMain::~GameMain()
 
 void GameMain::Initialize()
 {
-	
+	player = new Player();
+	player->Initialize();
+
+	cameraManager = new CameraManager();
+	cameraManager->Initialize();
 }
 
 void GameMain::Finalize()
@@ -50,15 +51,15 @@ void GameMain::Finalize()
 
 void GameMain::Activate()
 {
-	
+	player->Activate();
 
 	frame = 0;
 	state = START;
 	pUpdate = &GameMain::UpdateStart;
 
 #ifdef DEBUG
-	state = START;
-	pUpdate = &GameMain::UpdateStart;
+	state = GAME;
+	pUpdate = &GameMain::UpdateGame;
 #endif
 }
 
@@ -97,20 +98,17 @@ void GameMain::Update()
 /// </summary>
 void GameMain::Draw()
 {
-	
-
+	player->Draw();
 }
 
 void GameMain::UpdateStart()
 {
-
-
-	
 }
 
 void GameMain::UpdateGame()
 {
-	
+	player->Update();
+	cameraManager->Update();
 }
 
 /// <summary>

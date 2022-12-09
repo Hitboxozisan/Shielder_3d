@@ -1,6 +1,6 @@
 #pragma once
 
-class Camera;
+class CameraBase;
 
 /// <summary>
 /// カメラマネージャー
@@ -15,24 +15,27 @@ public:
 	enum Camera
 	{
 		MAIN = 0,
-		LOCK_ON
+		LOCK_ON,
+
+		CAMERA_AMOUNT	// カメラの種類数
 	};
 
 	void Initialize();		// 初期化処理
 	void Finalize();		// 終了処理
 	void Update();
-	void Draw();
 
-	void SetNextCamera();		// 次のカメラをセット
-	void GetCurrentCamera();	// 現在のカメラを返す
+	void SetNextCamera(Camera next);		// 次のカメラをセット
+	//Camera GetCurrentCamera();				// 現在のカメラを返す
 
 private:
 	CameraManager(const CameraManager&);	// コピーコンストラクタ
 	void operator=(const CameraManager&);	// コピー代入演算子
 
-	Camera* eachCamera[Camera::LOCK_ON];	// 各カメラのインスタンス
-	Camera* currentPointer;					// 現在のカメラのポインタ
+	CameraBase* eachCameras[Camera::CAMERA_AMOUNT];	// 各カメラのインスタンス
+	CameraBase* currentPointer;						// 現在のカメラのポインタ
+	Camera		currentCamera;						// 現在のカメラ
+	Camera		nextCamera;							// 次のカメラ
 
-	void ChangeCamera();					// カメラを変更する
+	void ChangeCamera();							// カメラを変更する
 };
 

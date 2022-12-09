@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Camera.h"
+#include "CameraBase.h"
 
 /// <summary>
 /// メインカメラクラス
 /// </summary>
-class CameraMain : public Camera
+class CameraMain : public CameraBase
 {
 public:
 	CameraMain(CameraManager* const cameraManager);
@@ -16,10 +16,11 @@ public:
 	void Activate();		// 活性化処理
 	void Deactivate();		// 非活性化処理
 	void Update();			// 更新処理
-	void Draw();			// 描画処理
 
 private:
-	//CameraMain();
+	CameraMain();						// デフォルトコンストラクタ
+	CameraMain(const CameraMain&);		// コピーコンストラクタ
+	void operator=(const CameraMain&);	// 代入演算子
 
 };
 

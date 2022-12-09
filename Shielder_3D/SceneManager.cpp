@@ -1,4 +1,4 @@
-
+#include "Pch.h"
 #include "SceneManager.h"
 
 #include "GameMain.h"
@@ -10,12 +10,12 @@ SceneManager::SceneManager()
 	,currentScene()
 	,nextScene()
 {
-
+	// ˆ—‚È‚µ
 }
 
 SceneManager::~SceneManager()
 {
-
+	// ˆ—‚È‚µ
 }
 
 void SceneManager::Initialize()
@@ -23,8 +23,6 @@ void SceneManager::Initialize()
 	eachScenes[TITLE] = new Title(this);
 	eachScenes[GAME_MAIN] = new GameMain( this );
 	//eachScenes[RESULT] = new Result(this);
-
-	//
 
 	for (int i = 0; i < SceneManager::END; ++i)
 	{

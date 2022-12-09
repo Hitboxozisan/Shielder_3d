@@ -26,6 +26,7 @@ protected:
 	float hitPoint;	
 	float speed;					// 移動速度				
 	float invincibleTime;			// 無敵時間
+	bool  noDrawFrame;				// 描画可能フレームか
 	bool  isAlive;					// 生きているか
 
 private:

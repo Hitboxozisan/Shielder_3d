@@ -1,9 +1,9 @@
 #include "Pch.h"
 #include "DeltaTime.h"
 
-//---------------------------------------------
-// コンストラクタ
-//---------------------------------------------
+/// <summary>
+/// コンストラクタ
+/// </summary>
 DeltaTime::DeltaTime()
     : nowCount(0.0f)
     , prevCount(0.0f)
@@ -13,29 +13,29 @@ DeltaTime::DeltaTime()
     // 処理なし
 }
 
-//---------------------------------------------
-// デストラクタ
-//---------------------------------------------
+/// <summary>
+/// デストラクタ
+/// </summary>
 DeltaTime::~DeltaTime()
 {
     // 処理なし
 }
 
-//---------------------------------------------
-// インスタンスの取得
-//---------------------------------------------
+/// <summary>
+/// インスタンスの取得
+/// </summary>
+/// <returns></returns>
 DeltaTime& DeltaTime::GetInstance()
 {
     static DeltaTime deltaTime;
     return deltaTime;
 }
 
-//---------------------------------------------
-// DeltaTimeの計測
-//---------------------------------------------
+/// <summary>
+/// deltaTimeの取得
+/// </summary>
 void DeltaTime::InstrumentationDeltaTime()
 {
-    deltaTime;
     nowCount = GetNowCount();
     deltaTime = (nowCount - prevCount) / 1000.0f;
     prevCount = nowCount;
@@ -56,11 +56,10 @@ void DeltaTime::InstrumentationDeltaTime()
 //    }
 //}
 
-//---------------------------------------------
-// ゲーム開始時のタイムを取得
-//---------------------------------------------
+/// <summary>
+/// ゲーム開始時のタイムを取得
+/// </summary>
 void DeltaTime::SetCount()
 {
-    nowCount, prevCount;
     nowCount = prevCount = GetNowCount();
 }
