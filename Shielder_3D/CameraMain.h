@@ -22,5 +22,6 @@ private:
 	CameraMain(const CameraMain&);		// コピーコンストラクタ
 	void operator=(const CameraMain&);	// 代入演算子
 
+
 };
 

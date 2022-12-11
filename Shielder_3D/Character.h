@@ -15,7 +15,7 @@ public:
 	virtual void Update() = 0;			// 更新処理
 	virtual void Draw() = 0;			// 描画処理
 
-	void MoveFinish();						// 移動予定地に実際に移動
+	void		 MoveFinish();				// 移動予定地に実際に移動
 	virtual void GameStart() = 0;			// ゲーム開始時（演出用）
 	virtual void Releaseinvincible() = 0;	// 無敵状態解除
 

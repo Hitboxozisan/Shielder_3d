@@ -23,7 +23,7 @@ CameraMain::~CameraMain()
 /// </summary>
 void CameraMain::Initialize()
 {
-	position = VGet(500.0f, 100.0f, 0.0f);
+	position = VGet(500.0f, 100.0f, -500.0f);
 	nextPosition = prevPosition = position;
 	direction = VGet(0.0f, 0.0f, 1.0f);
 	nextDirection = prevDirection = direction;

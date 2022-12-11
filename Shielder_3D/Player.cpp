@@ -6,8 +6,10 @@
 
 const VECTOR Player::INITIAL_POSITION  = VGet(500.0f, 0.0f, 100.0f);
 const VECTOR Player::INITIAL_DIRECTION = VGet(0.0f, 0.0f, 1.0f);
-const VECTOR Player::INITIAL_SCALE = VGet(0.5f, 0.5f, 0.5f);
-const float  Player::NORMAL_SPEED = 100.0f;
+const VECTOR Player::INITIAL_SCALE     = VGet(0.5f, 0.5f, 0.5f);
+const float  Player::SPEED_INCREASE    = 5.0f;
+const float  Player::SPEED_DECREASE    = 10.0f;
+const float  Player::MAX_NORMAL_SPEED  = 200.0f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -15,6 +17,7 @@ using namespace Math3d;		// VECTORの計算に使用
 /// コンストラクタ
 /// </summary>
 Player::Player()
+	:inputDirection(ZERO_VECTOR)
 {
 }
 
@@ -55,7 +58,7 @@ void Player::Activate()
 	direction = INITIAL_DIRECTION;
 	nextDirection = direction;
 	prevDirection = direction;
-	speed = NORMAL_SPEED;
+	speed = 0.0f;
 	noDrawFrame = false;
 
 	// 状態を NORMAL に
@@ -139,14 +142,28 @@ void Player::Move()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 
-	// 入力がないなら停止する
-	if (VSquareSize(inputDirection) != 0.0f)
+	// 入力があると移動する
+	if (VSize(inputDirection) != 0.0f)
 	{
+		// 最大速度まで移動速度を徐々に増加させる
+		if (speed <= MAX_NORMAL_SPEED)
+		{
+			speed += SPEED_INCREASE;
+		}
+
 		nextDirection = VNorm(inputDirection);
 	}
 	else
 	{
-		nextDirection = inputDirection;
+		// 移動速度を徐々に減少させる
+		if (speed > 0.0f)
+		{
+			speed -= SPEED_DECREASE;
+		}
+		else
+		{
+			speed = 0.0f;
+		}
 	}
 
 	nextPosition = VAdd(position, VScale(nextDirection, speed) * deltaTime);
@@ -155,10 +172,10 @@ void Player::Move()
 /// <summary>
 /// 
 /// </summary>
-void Player::MoveFinish()
-{
-
-}
+//void Player::MoveFinish()
+//{
+//	printfDx("child");
+//}
 
 /// <summary>
 /// 入力処理
@@ -180,19 +197,19 @@ void Player::InputAction()
 	// 前後左右移動
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_W))
 	{
-		inputDirection += PROGRESS * speed * deltaTime;
+		inputDirection += PROGRESS;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_S))
 	{
-		inputDirection += RECESSION * speed * deltaTime;
+		inputDirection += RECESSION;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
 	{
-		inputDirection += LEFT * speed * deltaTime;
+		inputDirection += LEFT;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D))
 	{
-		inputDirection += RIGHT * speed * deltaTime;
+		inputDirection += RIGHT;
 	}
 
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))

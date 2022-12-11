@@ -30,7 +30,9 @@ private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
 	static const VECTOR INITIAL_DIRECTION;		// 初期向き
 	static const VECTOR INITIAL_SCALE;			// 初期サイズ
-	static const float  NORMAL_SPEED;			// 通常時速度
+	static const float  SPEED_INCREASE;			// 1フレームの速度増加量
+	static const float  SPEED_DECREASE;			// 1フレームの速度減少量
+	static const float  MAX_NORMAL_SPEED;		// 通常時最大速度
 	static const float  MAX_HITPOINT;			// 最大HitPoint
 
 	State state;								// 状態
@@ -43,6 +45,6 @@ private:
 	void UpdateDead();							// DEAD時更新処理
 
 	void Move();								// 移動処理
-	void MoveFinish();							// 移動予定地に実際に移動する
+	///void MoveFinish();							// 移動予定地に実際に移動する
 	void InputAction();							// 入力処理
 };

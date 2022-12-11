@@ -65,7 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		ClearDrawScreen();										// 画面更新処理
 #ifdef DEBUG
-		writeLineToField.WriteLine();
+		writeLineToField.WriteLine();							// フィールドにラインを描画
 #endif // DEBUG
 
 		sceneManager->Draw();									// 各シーンに応じた描画処理
