@@ -35,6 +35,7 @@ protected:
 	VECTOR direction;		// カメラの向き
 	VECTOR nextDirection;	// 次フレームの向き
 	VECTOR prevDirection;	// 前フレームでの向き
+	VECTOR targetPosition;	// 注視点の位置
 
 private:
 	CameraBase();						// デフォルトコンストラクタ

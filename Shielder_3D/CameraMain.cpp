@@ -23,10 +23,18 @@ CameraMain::~CameraMain()
 /// </summary>
 void CameraMain::Initialize()
 {
+	//float fov = CAMERA_FOV * DX_PI / 180.0f;
+
 	position = VGet(500.0f, 100.0f, -500.0f);
 	nextPosition = prevPosition = position;
 	direction = VGet(0.0f, 0.0f, 1.0f);
 	nextDirection = prevDirection = direction;
+
+	// FOV‚ğİ’è
+	//SetupCamera_Perspective(fov);
+
+	// ƒJƒƒ‰‚Ì•`‰æ”ÍˆÍ‚ğw’è
+	//SetCameraNearFar(CAMERA_NEAR, CAMERA_FAR);
 }
 
 /// <summary>
