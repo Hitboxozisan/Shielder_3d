@@ -2,6 +2,8 @@
 
 #include "Character.h"
 
+class Shield;
+
 class Player : public Character
 {
 public:

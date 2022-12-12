@@ -9,8 +9,8 @@ public:
 	void Update();
 	void Draw();
 	
-	void DrawCameraPosition(VECTOR position);		// カメラの現在位置を描画
-	void DrawCameraDirection(VECTOR direction);		// カメラの向きを描画
+	void DrawCameraPosition(VECTOR inPosition);		// カメラの現在位置を描画
+	void DrawCameraDirection(VECTOR inDirection);		// カメラの向きを描画
 
 private:
 

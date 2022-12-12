@@ -24,11 +24,11 @@ void DebugMenu::Draw()
 {
 }
 
-void DebugMenu::DrawCameraPosition(VECTOR position)
+void DebugMenu::DrawCameraPosition(VECTOR inPosition)
 {
 	//DrawFormatString()
 }
 
-void DebugMenu::DrawCameraDirection(VECTOR direction)
+void DebugMenu::DrawCameraDirection(VECTOR inDirection)
 {
 }
