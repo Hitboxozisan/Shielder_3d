@@ -1,5 +1,6 @@
 #include "Pch.h"
 #include "Player.h"
+#include "Shield.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
@@ -9,7 +10,8 @@ const VECTOR Player::INITIAL_DIRECTION = VGet(0.0f, 0.0f, 1.0f);
 const VECTOR Player::INITIAL_SCALE     = VGet(0.5f, 0.5f, 0.5f);
 const float  Player::SPEED_INCREASE    = 5.0f;
 const float  Player::SPEED_DECREASE    = 10.0f;
-const float  Player::MAX_NORMAL_SPEED  = 200.0f;
+const float  Player::MAX_NORMAL_SPEED  = 300.0f;
+const float  Player::MAX_DEFENSE_SPEED = 100.0f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -59,6 +61,7 @@ void Player::Activate()
 	nextDirection = direction;
 	prevDirection = direction;
 	speed = 0.0f;
+	maxSpeed = MAX_NORMAL_SPEED;
 	noDrawFrame = false;
 
 	// 状態を NORMAL に
@@ -67,6 +70,9 @@ void Player::Activate()
 
 	// モデルを初期位置に配置
 	MV1SetPosition(modelHandle, position);
+
+	shield = new Shield();
+	shield->Initialize();
 }
 
 /// <summary>
@@ -85,7 +91,6 @@ void Player::Update()
 	{
 		(this->*pUpdate)();		// 状態ごとの更新処理
 	}
-
 }
 
 /// <summary>
@@ -100,6 +105,7 @@ void Player::Draw()
 	}
 
 	MV1DrawModel(modelHandle);
+	shield->Draw();
 }
 
 /// <summary>
@@ -126,6 +132,17 @@ void Player::UpdateNomal()
 	MoveFinish();
 	InputAction();
 }
+/// <summary>
+/// DEFENSE時更新処理
+/// </summary>
+void Player::UpdateDefense()
+{
+	Move();
+	MoveFinish();
+	InputAction();
+	shield->SetShieldPosition(position, direction, prevDirection);
+	shield->Update();
+}
 
 /// <summary>
 /// DEAD時更新処理
@@ -146,7 +163,7 @@ void Player::Move()
 	if (VSize(inputDirection) != 0.0f)
 	{
 		// 最大速度まで移動速度を徐々に増加させる
-		if (speed <= MAX_NORMAL_SPEED)
+		if (speed <= maxSpeed)
 		{
 			speed += SPEED_INCREASE;
 		}
@@ -222,16 +239,15 @@ void Player::InputAction()
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT) ||
 		KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))
 	{
-		//speed = DEFENSE_SPEED;	// 移動速度変更
-		//CreateShield();			// 盾生成
+		ChangeSpeed(MAX_DEFENSE_SPEED);			// 速度を変更する
+		expandShield();							// 盾を生成する
 
 		//pUpdate = &Player::UpdateDefence;
 	}
 	else
 	{
-		//speed = NORMAL_SPEED;	// 
-
-		//shield->Deactivate();	//盾を消滅させる
+		ChangeSpeed(MAX_NORMAL_SPEED);			// 速度を変更する
+		shield->Deactivate();					//盾を消滅させる
 		//pUpdate = &Player::UpdateNormal;
 	}
 
@@ -240,4 +256,32 @@ void Player::InputAction()
 	{
 		//Recovery();
 	}
+}
+
+/// <summary>
+/// 最大移動速度を変更する
+/// </summary>
+/// <param name="speed">変更後の最大速度</param>
+void Player::ChangeSpeed(float afterSpeed)
+{
+	maxSpeed = afterSpeed;
+	// 変更時、移動速度が変更後の最大速度より速かったら速度を落とす
+	if (speed > maxSpeed)
+	{
+		speed = maxSpeed;
+	}
+}
+
+/// <summary>
+/// 盾を展開する
+/// </summary>
+void Player::expandShield()
+{
+	// 盾が既に存在してるもしくは破壊されているなら処理しない
+	if (shield->GetState() == Shield::State::DEPLOYMENT ||
+		shield->GetState() == Shield::State::DESTRUCTION)
+	{
+		return;
+	}
+	shield->Activate(position, direction, prevDirection);
 }
