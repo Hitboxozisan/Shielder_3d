@@ -1,6 +1,7 @@
 #pragma once
 
 class CameraBase;
+class Player;
 
 /// <summary>
 /// カメラマネージャー
@@ -24,7 +25,7 @@ public:
 	void Finalize();		// 終了処理
 	void Update();
 
-	void SetNextCamera(Camera next);		// 次のカメラをセット
+	void SetNextCamera(Camera next);			// 次のカメラをセット
 	//Camera GetCurrentCamera();				// 現在のカメラを返す
 
 private:
@@ -35,6 +36,8 @@ private:
 	CameraBase* currentPointer;						// 現在のカメラのポインタ
 	Camera		currentCamera;						// 現在のカメラ
 	Camera		nextCamera;							// 次のカメラ
+
+	//Player* const player;							// プレイヤークラスのポインタ
 
 	void ChangeCamera();							// カメラを変更する
 };

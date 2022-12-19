@@ -3,6 +3,7 @@
 
 #include "CameraMain.h"
 #include "CameraLockOn.h"
+#include "Player.h"
 
 /// <summary>
 /// コンストラクタ

@@ -4,6 +4,7 @@
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
+#include "CameraManager.h"
 
 const VECTOR Player::INITIAL_POSITION  = VGet(500.0f, 0.0f, 100.0f);
 const VECTOR Player::INITIAL_DIRECTION = VGet(0.0f, 0.0f, 1.0f);
@@ -18,8 +19,9 @@ using namespace Math3d;		// VECTORの計算に使用
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Player::Player()
+Player::Player(CameraManager* const inCameraManager)
 	:inputDirection(ZERO_VECTOR)
+	,cameraManager(inCameraManager)
 {
 }
 
@@ -73,6 +75,8 @@ void Player::Activate()
 
 	shield = new Shield();
 	shield->Initialize();
+
+	
 }
 
 /// <summary>
@@ -240,15 +244,12 @@ void Player::InputAction()
 		KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))
 	{
 		ChangeSpeed(MAX_DEFENSE_SPEED);			// 速度を変更する
-		expandShield();							// 盾を生成する
-
-		//pUpdate = &Player::UpdateDefence;
+		ActivateShield();						// 盾を生成する
 	}
 	else
 	{
 		ChangeSpeed(MAX_NORMAL_SPEED);			// 速度を変更する
 		shield->Deactivate();					//盾を消滅させる
-		//pUpdate = &Player::UpdateNormal;
 	}
 
 	// 回復
@@ -275,7 +276,7 @@ void Player::ChangeSpeed(float afterSpeed)
 /// <summary>
 /// 盾を展開する
 /// </summary>
-void Player::expandShield()
+void Player::ActivateShield()
 {
 	// 盾が既に存在してるもしくは破壊されているなら処理しない
 	if (shield->GetState() == Shield::State::DEPLOYMENT ||
@@ -284,4 +285,15 @@ void Player::expandShield()
 		return;
 	}
 	shield->Activate(position, direction, prevDirection);
+	pUpdate = &Player::UpdateDefense;
 }
+
+/// <summary>
+/// 盾を消滅させる
+/// </summary>
+void Player::DeactivateShield()
+{
+	shield->Deactivate();
+	pUpdate = &Player::UpdateNomal;
+}
+

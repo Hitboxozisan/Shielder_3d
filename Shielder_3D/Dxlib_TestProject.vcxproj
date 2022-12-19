@@ -160,6 +160,7 @@
     <ClCompile Include="DeltaTime.cpp" />
     <ClCompile Include="GameDefine.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="HitChecker.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math3d.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="GameDefine.h" />
     <ClInclude Include="GameMain.h" />
+    <ClInclude Include="HitChecker.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="Math3d.h" />
     <ClInclude Include="ModelManager.h" />

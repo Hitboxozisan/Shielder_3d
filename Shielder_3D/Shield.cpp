@@ -4,7 +4,7 @@
 #include "ModelManager.h"
 
 const float Shield::MAX_HITPOINT = 100.0f;
-const float Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 100.0f;
+const float Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 150.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -46,7 +46,9 @@ void Shield::Finalize()
 /// <param name="inPosition"></param>
 /// <param name="inDirection"></param>
 /// <param name="inPrevDirection"></param>
-void Shield::Activate(const VECTOR& inPosition, const VECTOR& inDirection, const VECTOR& inPrevDirection)
+void Shield::Activate(const VECTOR& inPosition,
+					  const VECTOR& inDirection, 
+					  const VECTOR& inPrevDirection)
 {
 	state = State::DEPLOYMENT;
 
@@ -56,6 +58,8 @@ void Shield::Activate(const VECTOR& inPosition, const VECTOR& inDirection, const
 
 	MV1SetPosition(modelHandle, position);					// モデルの位置を設定
 	MV1SetRotationYUseDir(modelHandle, direction, 0.0f);	// 盾の向きを設定
+
+	pUpdate = &Shield::UpdateDeployment;
 }
 
 /// <summary>
@@ -64,6 +68,7 @@ void Shield::Activate(const VECTOR& inPosition, const VECTOR& inDirection, const
 void Shield::Deactivate()
 {
 	state = State::NONE;
+	pUpdate = nullptr;
 }
 
 /// <summary>
@@ -98,9 +103,29 @@ void Shield::Draw()
 	MV1DrawModel(modelHandle);
 }
 
-
+/// <summary>
+/// 位置をセット
+/// </summary>
+/// <param name="inPosition"></param>
+/// <param name="inDirection"></param>
+/// <param name="inPrevDirection"></param>
 void Shield::SetShieldPosition(const VECTOR& inPosition, const VECTOR& inDirection, const VECTOR& inPrevDirection)
 {
+	position = inPosition;
+	direction = inDirection;
+	distanceToPlayer = VScale(direction, SCALE_BY_DIRECTION_FOR_CORRECTION);
+	position = VAdd(position, distanceToPlayer);
+}
+
+/// <summary>
+/// 実際に移動する
+/// </summary>
+void Shield::MoveFinish()
+{
+	// モデルの位置を設定
+	MV1SetPosition(modelHandle, position);
+	// モデルの向きを設定
+	MV1SetRotationYUseDir(modelHandle, direction, 0.0f);
 }
 
 /// <summary>
@@ -108,7 +133,7 @@ void Shield::SetShieldPosition(const VECTOR& inPosition, const VECTOR& inDirecti
 /// </summary>
 void Shield::UpdateDeployment()
 {
-
+	MoveFinish();
 }
 
 /// <summary>

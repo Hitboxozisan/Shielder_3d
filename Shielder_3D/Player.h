@@ -2,12 +2,14 @@
 
 #include "Character.h"
 
+
 class Shield;
+class CameraManager;
 
 class Player : public Character
 {
 public:
-	Player();
+	Player(CameraManager* const);
 	~Player();
 
 	// 状態
@@ -40,6 +42,7 @@ private:
 	static const float  MAX_HITPOINT;			// 最大HitPoint
 
 	Shield* shield;								// Shieldクラスのポインタ
+	CameraManager* cameraManager;				// CameraManagerクラスのポインタ
 
 	State state;								// 状態
 	VECTOR inputDirection;						// 入力方向
@@ -57,5 +60,6 @@ private:
 	///void MoveFinish();						// 移動予定地に実際に移動する
 	void InputAction();							// 入力処理
 	void ChangeSpeed(float afterSpeed);			// 移動速度を変更する
-	void expandShield();						// 盾を展開する
+	void ActivateShield();						// 盾を展開する
+	void DeactivateShield();					// 盾を消滅させる
 };

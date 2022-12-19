@@ -47,6 +47,8 @@ private:
 	float elapsedtTime;				// シールドを展開してからの経過時間
 	VECTOR distanceToPlayer;		// プレイヤーとの距離
 
+	void MoveFinish();				// 実際に移動する
+
 	void UpdateDeployment();		// DEPLOYMENT時更新処理
 	void UpdateDestruction();		// DESTRUCTION時更新処理
 

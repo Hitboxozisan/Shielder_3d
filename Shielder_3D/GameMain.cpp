@@ -37,11 +37,11 @@ GameMain::~GameMain()
 
 void GameMain::Initialize()
 {
-	player = new Player();
-	player->Initialize();
-
 	cameraManager = new CameraManager();
 	cameraManager->Initialize();
+
+	player = new Player(cameraManager);
+	player->Initialize();
 }
 
 void GameMain::Finalize()
