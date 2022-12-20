@@ -19,6 +19,7 @@ public:
 
 	void MoveFinish();					// ˆÚ“®—\’è’n‚ÉÀÛ‚ÉˆÚ“®‚·‚é
 
+	virtual void SetTargetPosition(VECTOR inTargetPosition);		// ’‹“_‚ğİ’è‚·‚é
 	const int GetId() const;			// ¯•Ê”Ô†‚ğ•Ô‚·
 	const VECTOR GetPosition() const;	// Œ»İˆÊ’u‚ğ•Ô‚·
 	const VECTOR GetDirection() const;	// Œ»İ‚ÌŒü‚«‚ğ•Ô‚·

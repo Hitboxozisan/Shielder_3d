@@ -53,6 +53,11 @@ void CameraBase::MoveFinish()
 	SetCameraPositionAndAngle(position, 0, 0, 0);
 }
 
+void CameraBase::SetTargetPosition(VECTOR inTargetPosition)
+{
+	targetPosition = inTargetPosition;
+}
+
 /// <summary>
 /// 識別番号を返す
 /// </summary>
@@ -87,50 +92,50 @@ void CameraBase::DebugMoveCamera()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 
-	// 前後左右移動
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I))
-	{
-		nextPosition += PROGRESS * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_K))
-	{
-		nextPosition += RECESSION * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_J))
-	{
-		nextPosition += LEFT * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_L))
-	{
-		nextPosition += RIGHT * speed * deltaTime;
-	}
-	// 上下移動
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I) &&
-		KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT))
-	{
-		nextPosition += UP * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I) &&
-		KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT))
-	{
-		nextPosition += DOWN * speed * deltaTime;
-	}
+	//// 前後左右移動
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I))
+	//{
+	//	nextPosition += PROGRESS * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_K))
+	//{
+	//	nextPosition += RECESSION * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_J))
+	//{
+	//	nextPosition += LEFT * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_L))
+	//{
+	//	nextPosition += RIGHT * speed * deltaTime;
+	//}
+	//// 上下移動
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I) &&
+	//	KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT))
+	//{
+	//	nextPosition += UP * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I) &&
+	//	KeyManager::GetInstance().CheckPressed(KEY_INPUT_LSHIFT))
+	//{
+	//	nextPosition += DOWN * speed * deltaTime;
+	//}
 
-	// カメラの向き変更
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_UP))
-	{
-		nextDirection += PROGRESS * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_DOWN))
-	{
-		nextDirection += RECESSION * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_LEFT))
-	{
-		nextDirection += LEFT * speed * deltaTime;
-	}
-	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_RIGHT))
-	{
-		nextDirection += RIGHT * speed * deltaTime;
-	}
+	//// カメラの向き変更
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_UP))
+	//{
+	//	nextDirection += PROGRESS * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_DOWN))
+	//{
+	//	nextDirection += RECESSION * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_LEFT))
+	//{
+	//	nextDirection += LEFT * speed * deltaTime;
+	//}
+	//if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_RIGHT))
+	//{
+	//	nextDirection += RIGHT * speed * deltaTime;
+	//}
 }

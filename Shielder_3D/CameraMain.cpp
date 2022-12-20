@@ -30,6 +30,9 @@ void CameraMain::Initialize()
 	direction = VGet(0.0f, 0.0f, 1.0f);
 	nextDirection = prevDirection = direction;
 
+	// position‚ÌˆÊ’u‚ÅtargetPosition‚ğ’‹‚·‚é
+	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+
 	// FOV‚ğİ’è
 	//SetupCamera_Perspective(fov);
 
@@ -49,6 +52,7 @@ void CameraMain::Fainalize()
 /// </summary>
 void CameraMain::Activate()
 {
+	
 }
 
 /// <summary>
@@ -64,5 +68,6 @@ void CameraMain::Deactivate()
 void CameraMain::Update()
 {
 	MoveFinish();
+	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
 	DebugMoveCamera();
 }

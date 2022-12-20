@@ -73,12 +73,26 @@ void CameraManager::Update()
 	}
 }
 
+void CameraManager::SetTargetPosition(VECTOR inPosition)
+{
+	currentPointer->SetTargetPosition(inPosition);
+}
+
 /// <summary>
 /// 次のカメラをセットする
 /// </summary>
 void CameraManager::SetNextCamera(Camera next)
 {
 	nextCamera = next;
+}
+
+/// <summary>
+/// カメラの向きを返す
+/// </summary>
+VECTOR CameraManager::GetDirection()
+{
+	VECTOR dir = currentPointer->GetDirection();
+	return dir;
 }
 
 

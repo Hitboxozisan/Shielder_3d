@@ -132,6 +132,9 @@ void Player::Releaseinvincible()
 /// </summary>
 void Player::UpdateNomal()
 {
+	cameraManager->SetTargetPosition(position);
+	cameraManager->Update();
+
 	Move();
 	MoveFinish();
 	InputAction();
@@ -172,7 +175,7 @@ void Player::Move()
 			speed += SPEED_INCREASE;
 		}
 
-		nextDirection = VNorm(inputDirection);
+		nextDirection = inputDirection;
 	}
 	else
 	{
@@ -204,6 +207,11 @@ void Player::Move()
 void Player::InputAction()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	VECTOR yAxis = { 0, 1, 0 };
+	VECTOR front = cameraManager->GetDirection();
+	front = VNorm(front);
+	VECTOR left = VCross(front, yAxis);
+
 	inputDirection = ZERO_VECTOR;
 
 #ifdef DEBUG
@@ -218,19 +226,19 @@ void Player::InputAction()
 	// 前後左右移動
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_W))
 	{
-		inputDirection += PROGRESS;
+		inputDirection += front;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_S))
 	{
-		inputDirection += RECESSION;
+		inputDirection += VScale(front, -1.0f);
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
 	{
-		inputDirection += LEFT;
+		inputDirection += left;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D))
 	{
-		inputDirection += RIGHT;
+		inputDirection += VScale(left, -1.0f);
 	}
 
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))
@@ -249,7 +257,7 @@ void Player::InputAction()
 	else
 	{
 		ChangeSpeed(MAX_NORMAL_SPEED);			// 速度を変更する
-		shield->Deactivate();					//盾を消滅させる
+		shield->Deactivate();					// 盾を消滅させる
 	}
 
 	// 回復
