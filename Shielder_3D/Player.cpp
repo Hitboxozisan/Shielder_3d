@@ -132,6 +132,7 @@ void Player::Releaseinvincible()
 /// </summary>
 void Player::UpdateNomal()
 {
+	cameraManager->SetActorPosition(position);
 	cameraManager->SetTargetPosition(position);
 	cameraManager->Update();
 
@@ -208,7 +209,8 @@ void Player::InputAction()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	VECTOR yAxis = { 0, 1, 0 };
-	VECTOR front = cameraManager->GetDirection();
+	VECTOR front = position - cameraManager->GetPosition();
+	front.y = 0.0f;				// 高さベクトルを考慮しない
 	front = VNorm(front);
 	VECTOR left = VCross(front, yAxis);
 

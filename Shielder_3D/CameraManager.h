@@ -25,11 +25,13 @@ public:
 	void Finalize();		// 終了処理
 	void Update();
 
-	void SetTargetPosition(VECTOR inPosition);	// 注視点を設定する
-	void SetNextCamera(Camera next);			// 次のカメラをセット
-	//Camera GetCurrentCamera();				// 現在のカメラを返す
+	void SetActorPosition(VECTOR inActorPosition);	// アクターの位置を設定する
+	void SetTargetPosition(VECTOR inPosition);		// 注視点を設定する
+	void SetNextCamera(Camera next);				// 次のカメラをセット
+	//Camera GetCurrentCamera();					// 現在のカメラを返す
 
-	VECTOR GetDirection();						// カメラの向きを返す
+	VECTOR GetPosition();							// カメラの現在地を返す
+	VECTOR GetDirection();							// カメラの向きを返す
 
 private:
 	CameraManager(const CameraManager&);	// コピーコンストラクタ

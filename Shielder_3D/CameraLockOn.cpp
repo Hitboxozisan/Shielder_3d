@@ -29,4 +29,5 @@ void CameraLockOn::Deactivate()
 
 void CameraLockOn::Update()
 {
+
 }

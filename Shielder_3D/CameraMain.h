@@ -5,7 +5,7 @@
 /// <summary>
 /// メインカメラクラス
 /// </summary>
-class CameraMain : public CameraBase
+class CameraMain final : public CameraBase
 {
 public:
 	CameraMain(CameraManager* const cameraManager);
@@ -22,6 +22,13 @@ private:
 	CameraMain(const CameraMain&);		// コピーコンストラクタ
 	void operator=(const CameraMain&);	// 代入演算子
 
+	void FollowTarget();				// ターゲットを追従する
+	void RotateCamera();				// カメラを回転させる
+	void InputAction();					// 入力処理
 
+	static const float INITIALIZE_RANGE_TARGET;		// ターゲットとの距離（初期値）
+
+	float cameraRadius;				// カメラ回転半径
+	float cameraYaw;				// 水平方向回転角（ヨー）
 };
 

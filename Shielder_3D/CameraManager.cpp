@@ -64,7 +64,7 @@ void CameraManager::Update()
 {
 	if (currentCamera != nextCamera)
 	{
-		ChangeCamera();		// 変更先カメラに変更する
+		ChangeCamera();					// 変更先カメラに変更する
 	}
 
 	if (currentPointer != nullptr)
@@ -73,6 +73,19 @@ void CameraManager::Update()
 	}
 }
 
+/// <summary>
+/// アクターの位置を設定する
+/// </summary>
+/// <param name="inActorPosition"></param>
+void CameraManager::SetActorPosition(VECTOR inActorPosition)
+{
+	currentPointer->SetActorPosition(inActorPosition);
+}
+
+/// <summary>
+/// 注視点を設定する
+/// </summary>
+/// <param name="inPosition"></param>
 void CameraManager::SetTargetPosition(VECTOR inPosition)
 {
 	currentPointer->SetTargetPosition(inPosition);
@@ -87,6 +100,16 @@ void CameraManager::SetNextCamera(Camera next)
 }
 
 /// <summary>
+/// カメラの現在地を返す
+/// </summary>
+/// <returns>カメラの現在地</returns>
+VECTOR CameraManager::GetPosition()
+{
+	VECTOR pos = currentPointer->GetPosition();
+	return pos;
+}
+
+/// <summary>
 /// カメラの向きを返す
 /// </summary>
 VECTOR CameraManager::GetDirection()
@@ -94,6 +117,7 @@ VECTOR CameraManager::GetDirection()
 	VECTOR dir = currentPointer->GetDirection();
 	return dir;
 }
+
 
 
 /// <summary>

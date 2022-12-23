@@ -107,8 +107,8 @@ void GameMain::UpdateStart()
 
 void GameMain::UpdateGame()
 {
-	player->Update();
 	cameraManager->Update();
+	player->Update();
 }
 
 /// <summary>

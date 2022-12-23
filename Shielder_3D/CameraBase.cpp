@@ -50,7 +50,17 @@ void CameraBase::MoveFinish()
 	direction = nextDirection;
 
 	// 
-	SetCameraPositionAndAngle(position, 0, 0, 0);
+	//SetCameraPositionAndAngle(position, 0, 0, 0);
+}
+
+/// <summary>
+/// アクターの座標を設定する
+/// </summary>
+/// <param name="inActorPosition"></param>
+void CameraBase::SetActorPosition(VECTOR inActorPosition)
+{
+	actorPosition = inActorPosition;
+
 }
 
 void CameraBase::SetTargetPosition(VECTOR inTargetPosition)

@@ -19,7 +19,8 @@ public:
 
 	void MoveFinish();					// 移動予定地に実際に移動する
 
-	virtual void SetTargetPosition(VECTOR inTargetPosition);		// 注視点を設定する
+	void SetActorPosition(VECTOR inActorPosition);			// アクターの座標を設定する
+	void SetTargetPosition(VECTOR inTargetPosition);		// 注視点を設定する
 	const int GetId() const;			// 識別番号を返す
 	const VECTOR GetPosition() const;	// 現在位置を返す
 	const VECTOR GetDirection() const;	// 現在の向きを返す
@@ -29,13 +30,15 @@ public:
 protected:
 	CameraManager* parent;	// カメラマネージャーのポインタ
 
-	int id;					// カメラの識別番号（今回は使用しないが今後のため）
+	int	   id;				// カメラの識別番号（今回は使用しないが今後のため）
+	float  rangeTarget;		// ターゲットとの距離
 	VECTOR position;		// 現在位置
 	VECTOR nextPosition;	// 次フレームでのポジション
 	VECTOR prevPosition;	// 前フレームでのポジション
 	VECTOR direction;		// カメラの向き
 	VECTOR nextDirection;	// 次フレームの向き
 	VECTOR prevDirection;	// 前フレームでの向き
+	VECTOR actorPosition;	// アクターの位置
 	VECTOR targetPosition;	// 注視点の位置
 
 private:

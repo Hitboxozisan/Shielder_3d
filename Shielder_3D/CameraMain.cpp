@@ -1,6 +1,12 @@
 #include "Pch.h"
 #include "CameraManager.h"
 #include "CameraMain.h"
+#include "KeyManager.h"
+#include "DeltaTime.h"
+
+using namespace Math3d;
+
+const float CameraMain::INITIALIZE_RANGE_TARGET = 50.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -8,6 +14,7 @@
 /// <param name="cameraManager"></param>
 CameraMain::CameraMain(CameraManager* const cameraManager)
 	:CameraBase(cameraManager)
+	,cameraRadius(0.0f)
 {
 }
 
@@ -29,6 +36,10 @@ void CameraMain::Initialize()
 	nextPosition = prevPosition = position;
 	direction = VGet(0.0f, 0.0f, 1.0f);
 	nextDirection = prevDirection = direction;
+
+	targetPosition = actorPosition + VGet(0.0f, 0.0f, 100.0f);
+	cameraRadius = 200.0f;
+	cameraYaw = 0.0f;
 
 	// positionの位置でtargetPositionを注視する
 	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
@@ -68,6 +79,51 @@ void CameraMain::Deactivate()
 void CameraMain::Update()
 {
 	MoveFinish();
-	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+	InputAction();
+	FollowTarget();
+	RotateCamera();
 	DebugMoveCamera();
+}
+
+/// <summary>
+/// ターゲットを追従する
+/// </summary>
+void CameraMain::FollowTarget()
+{
+	targetPosition = actorPosition;
+	position.x = targetPosition.x + cameraRadius * cosf(cameraYaw);
+	position.y = 100.0f;
+	position.z = targetPosition.z + cameraRadius * sinf(cameraYaw);
+	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+}
+
+/// <summary>
+/// カメラを回転させる
+/// </summary>
+void CameraMain::RotateCamera()
+{
+	
+}
+
+/// <summary>
+/// 入力処理
+/// </summary>
+void CameraMain::InputAction()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	if (cameraYaw > 360.0f || cameraYaw < 0.0f)
+	{
+		cameraYaw = 0.0f;
+	}
+
+	// カメラを時計回りに回転させる
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_Q))
+	{
+		cameraYaw += 0.5f * deltaTime;
+	}
+	// カメラを反時計回りに回転させる
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_E))
+	{
+		cameraYaw -= 0.5f * deltaTime;
+	}
 }
