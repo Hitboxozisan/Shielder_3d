@@ -17,6 +17,9 @@ namespace Math3d
 	// VECTORの演算子
 	VECTOR operator+=(VECTOR& lhs, const VECTOR& rhs);
 
+	// VECTORの演算子
+	VECTOR operator-=(VECTOR& lhs, const VECTOR& rhs);
+
 	// VECTORのスカラー倍の複合代入演算子
 	VECTOR operator*=(VECTOR& lhs, float rhs);
 

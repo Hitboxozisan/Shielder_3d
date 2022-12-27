@@ -29,15 +29,16 @@ public:
 
 	State GetState() const { return state; }			// 現在の状態を返す
 	void SetShieldPosition(const VECTOR& inPosition,
-							 const VECTOR& inDirection,
-							 const VECTOR& inPrevDirection);	// シールドの位置を設定
+						   const VECTOR& inDirection,
+						   const VECTOR& inPrevDirection);	// シールドの位置を設定
 
 private:
 	Shield(const Shield&);			// コピーコンストラクタ
 	void operator=(const Shield&);	// 代入演算子
-
-	static const float MAX_HITPOINT;							// 最大耐久値
-	static const float SCALE_BY_DIRECTION_FOR_CORRECTION;		// プレイヤーとの距離
+	
+	static const VECTOR INITIAL_SCALE;							// 初期サイズ
+	static const float  MAX_HITPOINT;							// 最大耐久値
+	static const float  SCALE_BY_DIRECTION_FOR_CORRECTION;		// プレイヤーとの距離
 
 	State state;
 

@@ -2,18 +2,19 @@
 
 #include "Character.h"
 
+using namespace My3dLib;
 
 class Shield;
-class CameraManager;
+class Camera;
 
 class Player : public Character
 {
 public:
-	Player(CameraManager* const);
+	Player(Camera* const);
 	~Player();
 
 	// 状態
-	enum State
+	enum class State
 	{
 		NONE,		// 存在しない
 		NORMAL,		// 通常
@@ -28,8 +29,11 @@ public:
 	void Update();			// 更新処理
 	void Draw();			// 描画処理
 
-	void GameStart();			// ゲーム開始時（演出用）
-	void Releaseinvincible();	// 無敵状態解除
+	void GameStart();					// ゲーム開始時（演出用）
+	void Releaseinvincible();			// 無敵状態解除
+
+	VECTOR GetShieldPosition();			// 盾の現在位置を返す
+	Shield::State GetShieldState();		// 盾の状態を返す
 
 private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
@@ -42,9 +46,11 @@ private:
 	static const float  MAX_HITPOINT;			// 最大HitPoint
 
 	Shield* shield;								// Shieldクラスのポインタ
-	CameraManager* cameraManager;				// CameraManagerクラスのポインタ
+	Camera* camera;								// Cameraクラスのポインタ
 
 	State state;								// 状態
+	Sphere collisionSphere;						// 当たり判定球
+
 	VECTOR inputDirection;						// 入力方向
 
 	float maxSpeed;								// 最大速度
@@ -62,4 +68,5 @@ private:
 	void ChangeSpeed(float afterSpeed);			// 移動速度を変更する
 	void ActivateShield();						// 盾を展開する
 	void DeactivateShield();					// 盾を消滅させる
+
 };

@@ -1,6 +1,7 @@
 #include "Pch.h"
 #include "Player.h"
 #include "Shield.h"
+#include "Camera.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
@@ -19,9 +20,9 @@ using namespace Math3d;		// VECTORの計算に使用
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Player::Player(CameraManager* const inCameraManager)
+Player::Player(Camera* const inCamera)
 	:inputDirection(ZERO_VECTOR)
-	,cameraManager(inCameraManager)
+	,camera(inCamera)
 {
 }
 
@@ -39,6 +40,7 @@ void Player::Initialize()
 {
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::PLAYER));
+	// モデルの拡大率設定
 	MV1SetScale(modelHandle, INITIAL_SCALE);
 }
 
@@ -67,7 +69,7 @@ void Player::Activate()
 	noDrawFrame = false;
 
 	// 状態を NORMAL に
-	state = NORMAL;
+	state = State::NORMAL;
 	pUpdate = &Player::UpdateNomal;
 
 	// モデルを初期位置に配置
@@ -103,7 +105,7 @@ void Player::Update()
 void Player::Draw()
 {
 	// 描画しないフレームなら描画しない
-	if (noDrawFrame || state == DEAD)
+	if (noDrawFrame || state == State::DEAD)
 	{
 		return;
 	}
@@ -128,14 +130,24 @@ void Player::Releaseinvincible()
 }
 
 /// <summary>
+/// 盾の現在位置を返す
+/// </summary>
+/// <returns></returns>
+VECTOR Player::GetShieldPosition()
+{
+	shield->GetPosition();
+}
+
+Shield::State Player::GetShieldState()
+{
+	return shield->GetState();
+}
+
+/// <summary>
 /// NORMAL時更新処理
 /// </summary>
 void Player::UpdateNomal()
 {
-	cameraManager->SetActorPosition(position);
-	cameraManager->SetTargetPosition(position);
-	cameraManager->Update();
-
 	Move();
 	MoveFinish();
 	InputAction();
@@ -170,6 +182,8 @@ void Player::Move()
 	// 入力があると移動する
 	if (VSize(inputDirection) != 0.0f)
 	{
+		// 正規化
+		inputDirection = VNorm(inputDirection);
 		// 最大速度まで移動速度を徐々に増加させる
 		if (speed <= maxSpeed)
 		{
@@ -192,6 +206,15 @@ void Player::Move()
 	}
 
 	nextPosition = VAdd(position, VScale(nextDirection, speed) * deltaTime);
+
+	// ロックオン中の場合は向きを固定する
+	if (camera->IsRockOn())
+	{
+		VECTOR front = position - camera->GetPosition();
+		front.y = 0.0f;
+		front = VNorm(front);
+		nextDirection = front;
+	}
 }
 
 /// <summary>
@@ -209,7 +232,7 @@ void Player::InputAction()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	VECTOR yAxis = { 0, 1, 0 };
-	VECTOR front = position - cameraManager->GetPosition();
+	VECTOR front = position - camera->GetPosition();
 	front.y = 0.0f;				// 高さベクトルを考慮しない
 	front = VNorm(front);
 	VECTOR left = VCross(front, yAxis);
@@ -241,6 +264,12 @@ void Player::InputAction()
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D))
 	{
 		inputDirection += VScale(left, -1.0f);
+	}
+
+	// ロックオン切り替え
+	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_R))
+	{
+		camera->ChangeCamera();
 	}
 
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))

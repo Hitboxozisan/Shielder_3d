@@ -3,6 +3,7 @@
 
 #include "ModelManager.h"
 
+const VECTOR Shield::INITIAL_SCALE = VGet(0.5f, 0.5f, 0.5f);
 const float Shield::MAX_HITPOINT = 100.0f;
 const float Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 150.0f;
 
@@ -30,6 +31,7 @@ void Shield::Initialize()
 	hitPoint = MAX_HITPOINT;
 	// ÉÇÉfÉãÇÃì«Ç›çûÇ›
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::SHIELD));
+	MV1SetScale(modelHandle, INITIAL_SCALE);
 }
 
 /// <summary>

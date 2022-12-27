@@ -7,11 +7,16 @@
 
 #include "KeyManager.h"
 #include "SceneManager.h"
+#include "Field.h"
+#include "Boss.h"
 #include "Player.h"
 #include "Character.h"
+#include "Camera.h"
 #include "CameraBase.h"
 #include "CameraManager.h"
 #include "ModelManager.h"
+#include "UiManager.h"
+#include "HitChecker.h"
 
 const int	GameMain::PLAYER_AMOUNT     = 1;
 const int	GameMain::ENEMY_AMOUNT      = 1;
@@ -21,7 +26,7 @@ const float GameMain::MAX_BULLET_AMOUNT = 8;
 
 GameMain::GameMain(SceneManager* const sceneManager)
 	:SceneBase(sceneManager)
-	,state(START)
+	,state(State::START)
 	,pUpdate(nullptr)
 	,frame()
 	,alpha()
@@ -35,34 +40,69 @@ GameMain::~GameMain()
 	
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void GameMain::Initialize()
 {
+	// カメラ管理クラス（使用しない可能性大）
 	cameraManager = new CameraManager();
 	cameraManager->Initialize();
+ 	// カメラクラス
+	camera = new Camera();
+	camera->Initialize();
 
-	player = new Player(cameraManager);
+	// プレイヤークラス
+	player = new Player(camera);
 	player->Initialize();
+
+	// ボスクラス
+	boss = new Boss();
+	boss->Initialize();
+
+	// フィールドクラス
+	field = new Field();
+	field->Initialize();
+
+	// Ui管理クラス
+	uiManager = new UiManager();
+	uiManager->Initialize();
+
+	hitChecker = new HitChecker();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void GameMain::Finalize()
 {
 	
 }
 
+/// <summary>
+/// 活性化処理
+/// </summary>
 void GameMain::Activate()
 {
-	player->Activate();
+	player->Activate();						// プレイヤークラス活性化処理
+	boss->Activate();						// ボスクラス活性化処理
+	camera->Activate(player->GetPosition(),
+					 boss->GetPosition());	// カメラクラス活性化処理
+	uiManager->Activate();					// Ui管理クラス活性化処理
 
 	frame = 0;
-	state = START;
+	state = State::START;
 	pUpdate = &GameMain::UpdateStart;
 
 #ifdef DEBUG
-	state = GAME;
+	state = State::GAME;
 	pUpdate = &GameMain::UpdateGame;
 #endif
 }
 
+/// <summary>
+/// 非活性化処理
+/// </summary>
 void GameMain::Deactivate()
 {
 	for (int i = 0; i < CHARACTER_AMOUNT; ++i)
@@ -70,7 +110,7 @@ void GameMain::Deactivate()
 		
 	}
 
-	state = START;
+	state = State::START;
 }
 
 /// <summary>
@@ -99,6 +139,11 @@ void GameMain::Update()
 void GameMain::Draw()
 {
 	player->Draw();
+	boss->Draw();
+	field->Draw();
+	uiManager->Draw(state, 
+					player->GetPosition(), 
+					boss->GetPosition());
 }
 
 void GameMain::UpdateStart()
@@ -107,8 +152,13 @@ void GameMain::UpdateStart()
 
 void GameMain::UpdateGame()
 {
-	cameraManager->Update();
+	//cameraManager->Update();
 	player->Update();
+	boss->Update();
+	camera->Update(player->GetPosition(),
+				   boss->GetPosition());
+	hitChecker->Check()
+
 }
 
 /// <summary>

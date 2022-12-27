@@ -2,7 +2,7 @@
 #include "ModelManager.h"
 
 const string ModelManager::MODEL_FOLDER_PATH = "Data/Model/";
-const string ModelManager::FIELD_PATH		 = "Field/TestField.mv1";
+const string ModelManager::FIELD_PATH		 = "Field/Field.mv1";
 const string ModelManager::PLAYER_PATH		 = "Player/Player.mv1";
 const string ModelManager::ENEMY_PATH		 = "Enemy/Enemy.mv1";
 const string ModelManager::SHIELD_PATH		 = "Shield/Shield.mv1";

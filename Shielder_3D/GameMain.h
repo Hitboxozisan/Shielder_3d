@@ -5,8 +5,13 @@
 #include <list>
 #include <string>
 
-class Player;
 class CameraManager;
+class Player;
+class Boss;
+class Camera;
+class Field;
+class UiManager;
+class HitChecker;
 
 class GameMain final : public SceneBase
 {
@@ -21,7 +26,7 @@ public:
 	void Update();
 	void Draw();
 
-	enum State
+	enum class State
 	{
 		START,
 		GAME,
@@ -43,8 +48,13 @@ private:
 	
 	State state;
 
-	Player *player;
 	CameraManager *cameraManager;
+	Player *player;
+	Boss* boss;
+	Camera* camera;
+	Field* field;
+	UiManager* uiManager;
+	HitChecker* hitChecker;
 
 	//std::vector<BackgroundMeteor*> activeBackgroundMeteor;
 	//std::vector<BackgroundMeteor*> deactiveBackgroundMeteor;

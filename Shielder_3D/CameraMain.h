@@ -27,8 +27,12 @@ private:
 	void InputAction();					// 入力処理
 
 	static const float INITIALIZE_RANGE_TARGET;		// ターゲットとの距離（初期値）
+	static const float RANGE_POSSIBLE_ROCKON;		// ロックオン可能距離
+	//static const float CAMERA_NEAR;					// カメラ描画範囲（手前）
+	//static const float CAMERA_FAR;					// カメラ描画範囲（奥）
 
 	float cameraRadius;				// カメラ回転半径
 	float cameraYaw;				// 水平方向回転角（ヨー）
+	float cameraPitch;				// 高さ方向回転角（ピッチ）
 };
 

@@ -76,6 +76,18 @@ namespace Math3d
 	}
 
 	/// <summary>
+	/// ベクトルの演算子
+	/// </summary>
+	/// <param name="lhs"></param>
+	/// <param name="rhs"></param>
+	/// <returns></returns>
+	VECTOR operator-=(VECTOR& lhs, const VECTOR& rhs)
+	{
+		lhs = lhs - rhs;
+		return lhs;
+	}
+
+	/// <summary>
 	/// 2つのベクトルの角度はほぼ同じか
 	/// </summary>
 	/// <param name="lhs"></param>

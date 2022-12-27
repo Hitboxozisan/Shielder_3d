@@ -7,6 +7,7 @@
 using namespace Math3d;
 
 const float CameraMain::INITIALIZE_RANGE_TARGET = 50.0f;
+const float CameraMain::RANGE_POSSIBLE_ROCKON = 100.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -38,8 +39,9 @@ void CameraMain::Initialize()
 	nextDirection = prevDirection = direction;
 
 	targetPosition = actorPosition + VGet(0.0f, 0.0f, 100.0f);
-	cameraRadius = 200.0f;
+	cameraRadius = 500.0f;
 	cameraYaw = 0.0f;
+	cameraPitch = 0.0f;
 
 	// positionの位置でtargetPositionを注視する
 	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
@@ -63,7 +65,6 @@ void CameraMain::Fainalize()
 /// </summary>
 void CameraMain::Activate()
 {
-	
 }
 
 /// <summary>
@@ -90,11 +91,7 @@ void CameraMain::Update()
 /// </summary>
 void CameraMain::FollowTarget()
 {
-	targetPosition = actorPosition;
-	position.x = targetPosition.x + cameraRadius * cosf(cameraYaw);
-	position.y = 100.0f;
-	position.z = targetPosition.z + cameraRadius * sinf(cameraYaw);
-	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+	
 }
 
 /// <summary>
@@ -102,7 +99,17 @@ void CameraMain::FollowTarget()
 /// </summary>
 void CameraMain::RotateCamera()
 {
-	
+	targetPosition = actorPosition;
+
+	position.x = targetPosition.x + cameraRadius * cosf(cameraYaw);
+	//position.y = 50.0f;
+	position.z = targetPosition.z + cameraRadius * sinf(cameraYaw);
+
+	//position.x = position.x * cosf(cameraPitch);
+	position.y = cameraRadius * sinf(cameraPitch);
+	//position.z = position.z * cosf(cameraPitch);
+
+	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
 }
 
 /// <summary>
@@ -113,7 +120,7 @@ void CameraMain::InputAction()
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	if (cameraYaw > 360.0f || cameraYaw < 0.0f)
 	{
-		cameraYaw = 0.0f;
+		//cameraYaw = 0.0f;
 	}
 
 	// カメラを時計回りに回転させる
@@ -125,5 +132,15 @@ void CameraMain::InputAction()
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_E))
 	{
 		cameraYaw -= 0.5f * deltaTime;
+	}
+	// カメラ位置を高くする
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I))
+	{
+		cameraPitch += 0.5f * deltaTime;
+	}
+	// カメラ位置を低くする
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_K))
+	{
+		cameraPitch -= 0.5f * deltaTime;
 	}
 }

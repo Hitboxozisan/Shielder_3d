@@ -2,7 +2,6 @@
 #include "CameraManager.h"
 
 #include "CameraMain.h"
-#include "CameraLockOn.h"
 #include "Player.h"
 
 /// <summary>
@@ -31,7 +30,6 @@ CameraManager::~CameraManager()
 void CameraManager::Initialize()
 {
 	eachCameras[MAIN] = new CameraMain(this);
-	eachCameras[LOCK_ON] = new CameraLockOn(this);
 
 	// ŠeƒJƒƒ‰‚Ì‰Šú‰»ˆ—
 	for (int i = 0; i < Camera::CAMERA_AMOUNT; ++i)

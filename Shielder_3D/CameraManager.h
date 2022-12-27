@@ -15,16 +15,17 @@ public:
 	// カメラの種類
 	enum Camera
 	{
-		MAIN = 0,
-		LOCK_ON,
+		MAIN = 0,		// 主に使用するカメラ
+		//START,		// ゲーム開始時の演出用カメラ
 
 		CAMERA_AMOUNT	// カメラの種類数
 	};
 
 	void Initialize();		// 初期化処理
 	void Finalize();		// 終了処理
-	void Update();
+	void Update();			// 更新処理
 
+	//void SetRockOnPosition();
 	void SetActorPosition(VECTOR inActorPosition);	// アクターの位置を設定する
 	void SetTargetPosition(VECTOR inPosition);		// 注視点を設定する
 	void SetNextCamera(Camera next);				// 次のカメラをセット
