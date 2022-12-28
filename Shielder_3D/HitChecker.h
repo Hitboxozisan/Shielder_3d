@@ -12,6 +12,7 @@ public:
 	~HitChecker();
 
 	void Check(Player* player,
+		       Shield* shield,
 			   Boss* boss);
 
 private:

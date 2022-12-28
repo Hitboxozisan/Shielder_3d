@@ -154,10 +154,11 @@ void Camera::UpdatePosition(VECTOR inPlayerPos, VECTOR inEnemyPos)
 /// </summary>
 void Camera::CalculatingCamerePos()
 {
+	VECTOR pos = actorPosition - enemyPosition;
+	float distance = VSize(pos);
 	// ロックオンしている場合は敵とプレイヤーをカメラに収める
-	if (isRockOn)
+	if (isRockOnPossible())
 	{
-		VECTOR pos = actorPosition - enemyPosition;
 		// カメラの高さを一定にするため y成分を0にする
 		pos.y = 0.0f;
 		// ベクトルの正規化
@@ -222,11 +223,17 @@ void Camera::TargetRockon()
 bool Camera::isRockOnPossible()
 {
 	float range = VSize(enemyPosition - actorPosition);
-	if (rockOnDistance >= range)
+	if (rockOnDistance >= range && isRockOn)
 	{
 		return true;
 	}
-	return false;
+	// ロックオン中に範囲外に出た時のためフラグを false にする
+	else
+	{
+		isRockOn = false;
+		return false;
+	}
+	
 }
 
 /// <summary>

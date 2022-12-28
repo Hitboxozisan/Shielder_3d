@@ -138,9 +138,9 @@ void GameMain::Update()
 /// </summary>
 void GameMain::Draw()
 {
+	field->Draw();
 	player->Draw();
 	boss->Draw();
-	field->Draw();
 	uiManager->Draw(state, 
 					player->GetPosition(), 
 					boss->GetPosition());
@@ -157,7 +157,12 @@ void GameMain::UpdateGame()
 	boss->Update();
 	camera->Update(player->GetPosition(),
 				   boss->GetPosition());
-	hitChecker->Check()
+	// “–‚½‚è”»’èˆ—
+	// ‚‚Ìˆ—‚ð‚Ç‚¤‚É‚©‚µ‚½‚¢
+	// ‚‚Í‚‚ÅŒÂ•Ê‚Éˆ—‚·‚é‚×‚«‚©H
+	hitChecker->Check(player,
+					  player->GetShieldPointer(),
+					  boss);
 
 }
 

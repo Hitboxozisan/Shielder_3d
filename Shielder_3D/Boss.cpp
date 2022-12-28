@@ -2,9 +2,12 @@
 #include "Boss.h"
 #include "ModelManager.h"
 
+using namespace My3dLib;
+
 const VECTOR Boss::INITIAL_POSITION  = VGet(500.0f, 0.0f, 500.0f);
 const VECTOR Boss::INITIAL_DIRECTION = VGet(0.0f, 0.0f, -1.0f);
 const VECTOR Boss::INITIAL_SCALE     = VGet(0.5f, 0.5f, 0.5f);
+const float  Boss::COLLIDE_RADIUS    = 200.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -51,6 +54,11 @@ void Boss::Activate()
 	direction = INITIAL_DIRECTION;
 	nextDirection = direction;
 	prevDirection = direction;
+	// 当たり判定球情報設定
+	collisionSphere.localCenter = ZERO_VECTOR;
+	collisionSphere.worldCenter = position;
+	collisionSphere.radius = collideRadius;
+
 
 	// 初期状態を NORMAL に（後に別途行動切り替え）
 	state = State::ATTACK;
@@ -76,6 +84,9 @@ void Boss::Update()
 	{
 		(this->*pUpdate)();		// 状態ごとの更新処理
 	}
+
+	// 当たり判定球移動
+	collisionSphere.Move(position);
 }
 
 /// <summary>
@@ -90,6 +101,12 @@ void Boss::Draw()
 	}
 	
 	MV1DrawModel(modelHandle);
+
+#ifdef DEBUG
+	//当たり判定デバック描画
+	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		8, GetColor(0, 255, 0), 0, FALSE);
+#endif // DEBUG
 }
 
 /// <summary>

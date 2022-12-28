@@ -1,3 +1,10 @@
+//----------------------------------------------------------------
+// <不具合・バグ>
+// ・ロックオン中、速度を減衰するのは向きに影響するため移動中入力を止めると、
+// 　前に進む不具合が発生中。直前の入力向きを取得することで解決か？
+// 
+//----------------------------------------------------------------
+
 #include "Pch.h"
 #include "Player.h"
 #include "Shield.h"
@@ -14,6 +21,7 @@ const float  Player::SPEED_INCREASE    = 5.0f;
 const float  Player::SPEED_DECREASE    = 10.0f;
 const float  Player::MAX_NORMAL_SPEED  = 300.0f;
 const float  Player::MAX_DEFENSE_SPEED = 100.0f;
+const float  Player::COLLIDE_RADIUS	   = 100.0f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -67,6 +75,11 @@ void Player::Activate()
 	speed = 0.0f;
 	maxSpeed = MAX_NORMAL_SPEED;
 	noDrawFrame = false;
+	// 当たり判定球情報設定
+	collisionSphere.localCenter = ZERO_VECTOR;
+	collisionSphere.worldCenter = position;
+	collisionSphere.radius = COLLIDE_RADIUS;
+
 
 	// 状態を NORMAL に
 	state = State::NORMAL;
@@ -112,6 +125,13 @@ void Player::Draw()
 
 	MV1DrawModel(modelHandle);
 	shield->Draw();
+
+#ifdef DEBUG
+	//当たり判定デバック描画
+	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		32, GetColor(0, 255, 0), 0, FALSE);
+
+#endif // DEBUG
 }
 
 /// <summary>
@@ -129,19 +149,24 @@ void Player::Releaseinvincible()
 
 }
 
-/// <summary>
-/// 盾の現在位置を返す
-/// </summary>
-/// <returns></returns>
-VECTOR Player::GetShieldPosition()
+Shield *Player::GetShieldPointer()
 {
-	shield->GetPosition();
+	return shield;
 }
 
-Shield::State Player::GetShieldState()
-{
-	return shield->GetState();
-}
+///// <summary>
+///// 盾の現在位置を返す
+///// </summary>
+///// <returns></returns>
+//VECTOR Player::GetShieldPosition()
+//{
+//	shield->GetPosition();
+//}
+//
+//State Player::GetShieldState()
+//{
+//	return shield->GetState();
+//}
 
 /// <summary>
 /// NORMAL時更新処理
@@ -215,6 +240,9 @@ void Player::Move()
 		front = VNorm(front);
 		nextDirection = front;
 	}
+
+	// 当たり判定球移動処理
+	collisionSphere.Move(position);
 }
 
 /// <summary>

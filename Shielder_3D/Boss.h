@@ -2,6 +2,8 @@
 
 #include "Mover.h"
 
+using namespace My3dLib;
+
 class Boss : public Mover
 {
 public:
@@ -32,8 +34,12 @@ private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
 	static const VECTOR INITIAL_DIRECTION;		// 初期向き
 	static const VECTOR INITIAL_SCALE;			// 初期サイズ
+	static const float  COLLIDE_RADIUS;			// 当たり判定球半径
 
 	State state;						// 状態
+	Sphere collisionSphere;				// 当たり判定球
+
+	float collideRadius;				// 当たり判定半径
 
 	void (Boss::* pUpdate)();			// Update関数ポインタ
 

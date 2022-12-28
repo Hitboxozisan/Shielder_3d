@@ -32,8 +32,10 @@ public:
 	void GameStart();					// ゲーム開始時（演出用）
 	void Releaseinvincible();			// 無敵状態解除
 
-	VECTOR GetShieldPosition();			// 盾の現在位置を返す
-	Shield::State GetShieldState();		// 盾の状態を返す
+	Shield *GetShieldPointer();			// 盾のポインタを返す
+
+	//VECTOR GetShieldPosition();			// 盾の現在位置を返す
+	//State GetShieldState();				// 盾の状態を返す
 
 private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
@@ -43,8 +45,9 @@ private:
 	static const float  SPEED_DECREASE;			// 1フレームの速度減少量
 	static const float  MAX_NORMAL_SPEED;		// 通常時最大速度
 	static const float  MAX_DEFENSE_SPEED;		// 防御時最大速度
+	static const float  COLLIDE_RADIUS;			// 当たり判定球半径
 	static const float  MAX_HITPOINT;			// 最大HitPoint
-
+	
 	Shield* shield;								// Shieldクラスのポインタ
 	Camera* camera;								// Cameraクラスのポインタ
 
@@ -54,6 +57,7 @@ private:
 	VECTOR inputDirection;						// 入力方向
 
 	float maxSpeed;								// 最大速度
+	float collideRadius;						// 当たり判定球半径
 
 	void (Player::* pUpdate)();					// Update関数ポインタ
 
@@ -68,5 +72,6 @@ private:
 	void ChangeSpeed(float afterSpeed);			// 移動速度を変更する
 	void ActivateShield();						// 盾を展開する
 	void DeactivateShield();					// 盾を消滅させる
+
 
 };

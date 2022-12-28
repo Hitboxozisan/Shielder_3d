@@ -23,6 +23,7 @@ HitChecker::~HitChecker()
 /// <param name="player"></param>
 /// <param name="boss"></param>
 void HitChecker::Check(Player* player,
+					   Shield* shield,
 					   Boss* boss)
 {
 
