@@ -149,6 +149,28 @@ void Player::Releaseinvincible()
 
 }
 
+/// <summary>
+/// 当たり判定球半径を返す
+/// </summary>
+/// <returns></returns>
+float Player::GetCollideRadius()
+{
+	return collideRadius;
+}
+
+/// <summary>
+/// プレイヤーの状態を返す
+/// </summary>
+/// <returns></returns>
+Player::State Player::GetCurrentState()
+{
+	return state;
+}
+
+/// <summary>
+/// 盾のポインタを返す
+/// </summary>
+/// <returns></returns>
 Shield *Player::GetShieldPointer()
 {
 	return shield;

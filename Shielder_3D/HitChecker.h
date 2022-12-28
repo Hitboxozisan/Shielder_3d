@@ -12,8 +12,10 @@ public:
 	~HitChecker();
 
 	void Check(Player* player,
-		       Shield* shield,
-			   Boss* boss);
+		Shield* shield,
+		Boss* boss);
+
+	void PlayerAndEnemy(Player* player, Boss* boss);		// ƒvƒŒƒCƒ„[‚Æ“G‚Ì“–‚½‚è”»’è
 
 private:
 	int hitStopTime;

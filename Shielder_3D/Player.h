@@ -32,6 +32,8 @@ public:
 	void GameStart();					// ゲーム開始時（演出用）
 	void Releaseinvincible();			// 無敵状態解除
 
+	float GetCollideRadius();			// 当たり判定球半径を返す
+	State GetCurrentState();			// 現在の状態を返す
 	Shield *GetShieldPointer();			// 盾のポインタを返す
 
 	//VECTOR GetShieldPosition();			// 盾の現在位置を返す

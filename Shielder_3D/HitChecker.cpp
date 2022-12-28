@@ -5,7 +5,10 @@
 #include "Character.h"
 #include "Player.h"
 #include "Shield.h"
+#include "Boss.h"
 #include "SoundManager.h"
+
+using namespace Math3d;
 
 HitChecker::HitChecker()
 {
@@ -26,6 +29,17 @@ void HitChecker::Check(Player* player,
 					   Shield* shield,
 					   Boss* boss)
 {
+
+}
+
+/// <summary>
+/// プレイヤーと敵の当たり判定
+/// </summary>
+/// <param name="player">プレイヤーのポインタ</param>
+/// <param name="boss">エネミーのポインタ</param>
+void HitChecker::PlayerAndEnemy(Player* player, Boss* boss)
+{
+	VECTOR sub = player->GetPosition() - boss->GetPosition();
 
 }
 
