@@ -19,6 +19,7 @@ public:
 		NONE,		// 存在しない
 		NORMAL,		// 通常
 		DEFENSE,	// 防御
+		DAMAGE,		// 被弾
 		DEAD		// 死亡
 	};
 
@@ -31,10 +32,11 @@ public:
 
 	void GameStart();					// ゲーム開始時（演出用）
 	void Releaseinvincible();			// 無敵状態解除
+	void HitOtherCharacter();			// 他のキャラクターと接触した
 
-	float GetCollideRadius();			// 当たり判定球半径を返す
-	State GetCurrentState();			// 現在の状態を返す
-	Shield *GetShieldPointer();			// 盾のポインタを返す
+	const float GetCollideRadius();			// 当たり判定球半径を返す
+	const State GetCurrentState();			// 現在の状態を返す
+	Shield *GetShieldPointer();				// 盾のポインタを返す
 
 	//VECTOR GetShieldPosition();			// 盾の現在位置を返す
 	//State GetShieldState();				// 盾の状態を返す
@@ -59,13 +61,13 @@ private:
 	VECTOR inputDirection;						// 入力方向
 
 	float maxSpeed;								// 最大速度
-	float collideRadius;						// 当たり判定球半径
 
 	void (Player::* pUpdate)();					// Update関数ポインタ
 
 	// 各Stateごとの更新処理
 	void UpdateNomal();							// NORMAL時更新処理
 	void UpdateDefense();						// DEFENSE時更新処理
+	void UpdateDamage();						// DAMAGE時更新処理
 	void UpdateDead();							// DEAD時更新処理
 
 	void Move();								// 移動処理

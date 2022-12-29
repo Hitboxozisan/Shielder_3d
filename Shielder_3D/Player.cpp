@@ -150,19 +150,29 @@ void Player::Releaseinvincible()
 }
 
 /// <summary>
+/// 他のキャラクターと接触した
+/// </summary>
+void Player::HitOtherCharacter()
+{
+	// ダメージエフェクトを生成する
+
+	// 
+}
+
+/// <summary>
 /// 当たり判定球半径を返す
 /// </summary>
 /// <returns></returns>
-float Player::GetCollideRadius()
+const float Player::GetCollideRadius()
 {
-	return collideRadius;
+	return collisionSphere.radius;
 }
 
 /// <summary>
 /// プレイヤーの状態を返す
 /// </summary>
 /// <returns></returns>
-Player::State Player::GetCurrentState()
+const Player::State Player::GetCurrentState()
 {
 	return state;
 }
@@ -209,6 +219,13 @@ void Player::UpdateDefense()
 	InputAction();
 	shield->SetShieldPosition(position, direction, prevDirection);
 	shield->Update();
+}
+
+/// <summary>
+/// DAMAGE時の更新処理
+/// </summary>
+void Player::UpdateDamage()
+{
 }
 
 /// <summary>

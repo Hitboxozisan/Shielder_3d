@@ -30,6 +30,8 @@ public:
 	void Draw();			// 描画処理
 
 	void MoveFinish();		// 移動予定地に実際に移動する
+
+	const float GetCollideRadius();		// 当たり判定球半径を返す
 private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
 	static const VECTOR INITIAL_DIRECTION;		// 初期向き
@@ -39,7 +41,6 @@ private:
 	State state;						// 状態
 	Sphere collisionSphere;				// 当たり判定球
 
-	float collideRadius;				// 当たり判定半径
 
 	void (Boss::* pUpdate)();			// Update関数ポインタ
 

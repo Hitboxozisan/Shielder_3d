@@ -7,7 +7,7 @@ using namespace My3dLib;
 const VECTOR Boss::INITIAL_POSITION  = VGet(500.0f, 0.0f, 500.0f);
 const VECTOR Boss::INITIAL_DIRECTION = VGet(0.0f, 0.0f, -1.0f);
 const VECTOR Boss::INITIAL_SCALE     = VGet(0.5f, 0.5f, 0.5f);
-const float  Boss::COLLIDE_RADIUS    = 200.0f;
+const float  Boss::COLLIDE_RADIUS    = 100.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -57,7 +57,7 @@ void Boss::Activate()
 	// 当たり判定球情報設定
 	collisionSphere.localCenter = ZERO_VECTOR;
 	collisionSphere.worldCenter = position;
-	collisionSphere.radius = collideRadius;
+	collisionSphere.radius = COLLIDE_RADIUS;
 
 
 	// 初期状態を NORMAL に（後に別途行動切り替え）
@@ -114,6 +114,15 @@ void Boss::Draw()
 /// </summary>
 void Boss::MoveFinish()
 {
+}
+
+/// <summary>
+/// 当たり判定球半径を返す
+/// </summary>
+/// <returns></returns>
+const float Boss::GetCollideRadius()
+{
+	return collisionSphere.radius;
 }
 
 void Boss::UpdateAttack()
