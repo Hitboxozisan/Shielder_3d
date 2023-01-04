@@ -9,7 +9,7 @@ extern const int  COLOR_BIT_DEPTH;      // カラービット数
 extern const int SCREEN_LEFTMOST;		// 画面左端座標
 extern const int SCREEN_RIGHTMOST;		// 画面右端座標
                                            
-extern const int SCREEN_CENTER;			// 画面中心座標
+extern const int SCREEN_CENTER;		    // 画面中心座標
 extern const int POSITION_CENTER;       // ステージ中心座標
                                            
 extern const VECTOR ZERO_VECTOR;		// ゼロベクトル

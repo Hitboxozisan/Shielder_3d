@@ -2,6 +2,8 @@
 
 #include "ObjectBase.h"
 
+using namespace My3dLib;
+
 class Shield final : public ObjectBase
 {
 public:
@@ -25,12 +27,15 @@ public:
 	void Update();										// 更新処理
 	void Draw();										// 描画処理
 
-	void DecrementHitPoint();							// 耐久値を減少させる
+	void HitOtherCharacter();								// 他のキャラクターと接触した
+	void DecrementHitPoint();								// 耐久値を減少させる
 
-	State GetState() const { return state; }			// 現在の状態を返す
 	void SetShieldPosition(const VECTOR& inPosition,
-						   const VECTOR& inDirection,
-						   const VECTOR& inPrevDirection);	// シールドの位置を設定
+		const VECTOR& inDirection,
+		const VECTOR& inPrevDirection);						// シールドの位置を設定
+	const float GetCollideRadius();							// 当たり判定球半径を返す
+	State GetState() const { return state; }				// 現在の状態を返す
+	
 
 private:
 	Shield(const Shield&);			// コピーコンストラクタ
@@ -39,8 +44,12 @@ private:
 	static const VECTOR INITIAL_SCALE;							// 初期サイズ
 	static const float  MAX_HITPOINT;							// 最大耐久値
 	static const float  SCALE_BY_DIRECTION_FOR_CORRECTION;		// プレイヤーとの距離
+	static const float  COLLIDE_RADIUS;							// 当たり判定球半径
+	static const float  COLLIDE_HEIGHT;							// 当たり判定球高さ
 
 	State state;
+	Sphere collisionSphere;			// 本来なら球体を使うべきではないが
+									// 端に攻撃が当たることは少ないため楽をする
 
 	void (Shield::* pUpdate)();		// Update関数ポインタ
 

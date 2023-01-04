@@ -1,3 +1,9 @@
+//----------------------------------------------------------------
+// <不具合・バグ>
+// ・
+// <note>
+// ・Check関数はGameObjectでまとめてタグでオブジェクトを判断したほうがいいかもしれん
+//----------------------------------------------------------------
 #pragma once
 
 class Character;
@@ -12,10 +18,14 @@ public:
 	~HitChecker();
 
 	void Check(Player* player,
-		Shield* shield,
-		Boss* boss);
+			   Shield* shield,
+			   Boss* boss);
 
-	void PlayerAndEnemy(Player* player, Boss* boss);		// プレイヤーと敵の当たり判定
+	// ほとんど似たようなものまとめられるか？
+	void PlayerAndEnemy(Player* player, Boss* boss);		// プレイヤーとエネミーの当たり判定
+	void ShieldAndEnemy(Player* player,
+						Shield* shield,
+						Boss* boss);						// 盾とエネミーの当たり判定
 
 private:
 	int hitStopTime;

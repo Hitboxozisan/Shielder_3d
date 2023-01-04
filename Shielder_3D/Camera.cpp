@@ -10,7 +10,7 @@ const float Camera::HORIZONTAL_DISTANCE		 = 200.0f;
 const float Camera::VERTICAL_DISTANCE		 = 500.0f;
 const float Camera::CAMERA_DISTANCE			 = 500.0f;
 const float Camera::DISPLACE_DISTANCE		 = 100.0f;
-const float Camera::ROCKON_POSSIBLE_DISTANCE = 800.0f;
+const float Camera::ROCKON_POSSIBLE_DISTANCE = 2000.0f;
 const float Camera::ROCKON_DISTANCE			 = 400.0f;
 const float Camera::ROCKON_VERTICAL_DISTANCE = 400.0f;
 
@@ -223,7 +223,8 @@ void Camera::TargetRockon()
 bool Camera::isRockOnPossible()
 {
 	float range = VSize(enemyPosition - actorPosition);
-	if (rockOnDistance >= range && isRockOn)
+	// ロックオン可能距離内なら
+	if (ROCKON_POSSIBLE_DISTANCE >= range && isRockOn)
 	{
 		return true;
 	}

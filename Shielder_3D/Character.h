@@ -19,7 +19,7 @@ public:
 	virtual void GameStart() = 0;			// ゲーム開始時（演出用）
 	virtual void Releaseinvincible() = 0;	// 無敵状態解除
 
-	bool IsAlive();						// 生きているかを返す
+	bool IsAlive();							// 生きているかを返す
 
 protected:
 

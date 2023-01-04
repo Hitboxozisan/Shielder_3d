@@ -122,13 +122,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\gaiya\Desktop\DxLib_VC\Dxlib_Effekseer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gaiya\OneDrive\デスクトップ\Dxlib_Effekseer</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\gaiya\Desktop\DxLib_VC\Dxlib_Effekseer</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\gaiya\OneDrive\デスクトップ\Dxlib_Effekseer</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\gaiya\Desktop\DxLib_VC\Dxlib_Effekseer</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gaiya\OneDrive\デスクトップ\Dxlib_Effekseer</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -147,11 +147,13 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\gaiya\Desktop\DxLib_VC\Dxlib_Effekseer</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\gaiya\OneDrive\デスクトップ\Dxlib_Effekseer</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="BulletCreater.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraBase.cpp" />
     <ClCompile Include="CameraMain.cpp" />
@@ -176,12 +178,15 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="UiManager.cpp" />
     <ClCompile Include="WriteLineToField.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletCreater.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraBase.h" />
     <ClInclude Include="CameraMain.h" />
@@ -206,6 +211,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shield.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Title.h" />
     <ClInclude Include="UiManager.h" />
     <ClInclude Include="WriteLineToField.h" />

@@ -13,15 +13,21 @@
 #include "KeyManager.h"
 #include "ModelManager.h"
 #include "CameraManager.h"
+#include "Timer.h"
 
-const VECTOR Player::INITIAL_POSITION  = VGet(500.0f, 0.0f, 100.0f);
-const VECTOR Player::INITIAL_DIRECTION = VGet(0.0f, 0.0f, 1.0f);
-const VECTOR Player::INITIAL_SCALE     = VGet(0.5f, 0.5f, 0.5f);
-const float  Player::SPEED_INCREASE    = 5.0f;
-const float  Player::SPEED_DECREASE    = 10.0f;
-const float  Player::MAX_NORMAL_SPEED  = 300.0f;
-const float  Player::MAX_DEFENSE_SPEED = 100.0f;
-const float  Player::COLLIDE_RADIUS	   = 100.0f;
+const VECTOR Player::INITIAL_POSITION    = VGet(500.0f, 0.0f, 100.0f);
+const VECTOR Player::INITIAL_DIRECTION   = VGet(0.0f, 0.0f, 1.0f);
+const VECTOR Player::INITIAL_SCALE       = VGet(0.5f, 0.5f, 0.5f);
+const float  Player::SPEED_INCREASE      = 5.0f;
+const float  Player::SPEED_DECREASE      = 10.0f;
+const float  Player::MAX_HIT_POINT	     = 100.0f;
+const float  Player::MAX_NORMAL_SPEED    = 500.0f;
+const float  Player::MAX_DEFENSE_SPEED   = 200.0f;
+const float  Player::COLLIDE_RADIUS	     = 100.0f;
+const float  Player::DECREMENT_HIT_POINT = 10.0f;
+const float  Player::FORCE_AT_DAMAGE	 = 5.0f;
+const float  Player::FORCE_AT_DEFENSE    = 3.0f;
+const float  Player::FRICTIONAL_FORCE	 = -0.1f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -72,6 +78,7 @@ void Player::Activate()
 	direction = INITIAL_DIRECTION;
 	nextDirection = direction;
 	prevDirection = direction;
+	hitPoint = MAX_HIT_POINT;
 	speed = 0.0f;
 	maxSpeed = MAX_NORMAL_SPEED;
 	noDrawFrame = false;
@@ -91,7 +98,6 @@ void Player::Activate()
 	shield = new Shield();
 	shield->Initialize();
 
-	
 }
 
 /// <summary>
@@ -110,6 +116,9 @@ void Player::Update()
 	{
 		(this->*pUpdate)();		// 状態ごとの更新処理
 	}
+
+	// 当たり判定球移動処理
+	collisionSphere.Move(position);
 }
 
 /// <summary>
@@ -152,11 +161,38 @@ void Player::Releaseinvincible()
 /// <summary>
 /// 他のキャラクターと接触した
 /// </summary>
-void Player::HitOtherCharacter()
+void Player::HitOtherCharacter(const VECTOR& forceDirection)
 {
+	// 跳ね返る力を設定
+	force = forceDirection;
+	force = VScale(force, FORCE_AT_DAMAGE);
+
 	// ダメージエフェクトを生成する
 
-	// 
+	// HitPointを減少させる
+	DecrementHitPoint();
+
+	// 状態を DAMAGE に
+	state = State::DAMAGE;
+	pUpdate = &Player::UpdateDamage;
+}
+
+/// <summary>
+/// シールドが他のキャラクターが接触した
+/// </summary>
+/// <param name="forceDirection"></param>
+void Player::HitShieldOtherCharacter(const VECTOR& forceDirection)
+{
+	// 跳ね返る力を設定
+	force = forceDirection;
+	force = VScale(force, FORCE_AT_DEFENSE);
+
+	// ガードエフェクトを生成する
+
+
+	// 状態を DAMAGE に
+	state = State::PREVENT;
+	pUpdate = &Player::UpdatePrevent;
 }
 
 /// <summary>
@@ -222,10 +258,29 @@ void Player::UpdateDefense()
 }
 
 /// <summary>
+/// PREVENT時更新処理
+/// </summary>
+void Player::UpdatePrevent()
+{
+	MoveFinish();
+	DefenseBouncePlayer();
+	shield->SetShieldPosition(position, direction, prevDirection);
+	shield->Update();
+}
+
+/// <summary>
 /// DAMAGE時の更新処理
 /// </summary>
 void Player::UpdateDamage()
 {
+	// 跳ね返り終了後行動可能に
+	if (DamageBouncePlayer())
+	{
+		/*InputAction();
+		InvincibleUpdate();
+		Move();*/
+	}
+	MoveFinish();
 }
 
 /// <summary>
@@ -280,8 +335,7 @@ void Player::Move()
 		nextDirection = front;
 	}
 
-	// 当たり判定球移動処理
-	collisionSphere.Move(position);
+	
 }
 
 /// <summary>
@@ -401,5 +455,106 @@ void Player::DeactivateShield()
 {
 	shield->Deactivate();
 	pUpdate = &Player::UpdateNomal;
+}
+
+/// <summary>
+/// 体力を減少させる
+/// </summary>
+void Player::DecrementHitPoint()
+{
+	// HitPointを減少させる
+	hitPoint -= DECREMENT_HIT_POINT;
+	// HitPointが底をついたらこれ以上減少しないようにする
+	if (hitPoint <= 0)
+	{
+		hitPoint = 0.0f;
+	}
+}
+
+/// <summary>
+/// 無敵状態処理
+/// </summary>
+void Player::InvincibleUpdate()
+{
+	// インスタンスの生成
+	if (timer == nullptr)
+	{
+		timer = new Timer(2.0f);
+	}
+
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
+	// 一定時間無敵状態にする
+	timer->Update(deltaTime);
+
+	// 一定時間経過後無敵状態解除
+	if (timer->IsTimeout())
+	{
+		noDrawFrame = false;
+
+		// 状態を NORMAL に
+		state = State::NORMAL;
+		pUpdate = &Player::UpdateNomal;
+	}
+	else
+	{
+		// 2フレームに1回描画する
+		noDrawFrame != noDrawFrame;
+	}
+
+}
+
+/// <summary>
+/// プレイヤーを跳ね返す（ダメージ）
+/// </summary>
+bool Player::DamageBouncePlayer()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	// 摩擦力を設定
+	VECTOR frictionalForce = VNorm(force);
+	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
+
+	nextPosition = VAdd(nextPosition, force);
+	force = VAdd(force, frictionalForce);
+
+	//printfDx("")
+	// 跳ね返す力が0になったら終了する
+	if (VSize(force) <= 0.0f)
+	{
+		// 状態を NORMAL に
+		state = State::NORMAL;
+		pUpdate = &Player::UpdateNomal;
+		return true;
+	}
+	return false;
+}
+
+/// <summary>
+/// プレイヤーを跳ね返す（ディフェンス）
+/// </summary>
+/// <returns></returns>
+bool Player::DefenseBouncePlayer()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	// 摩擦力を設定
+	VECTOR frictionalForce = VNorm(force);
+	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
+
+	nextPosition = VAdd(nextPosition, force);
+	force = VAdd(force, frictionalForce);
+
+	//printfDx("")
+	// 跳ね返す力が0になったら終了する
+	if (VSize(force) <= 0.0f)
+	{
+		// シールドを非活性化
+		shield->Deactivate();
+
+		// 状態を NORMAL に
+		state = State::NORMAL;
+		pUpdate = &Player::UpdateNomal;
+		return true;
+	}
+	return false;
 }
 

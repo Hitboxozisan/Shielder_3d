@@ -57,7 +57,7 @@ void GameMain::Initialize()
 	player->Initialize();
 
 	// ボスクラス
-	boss = new Boss();
+	boss = new Boss(player);
 	boss->Initialize();
 
 	// フィールドクラス

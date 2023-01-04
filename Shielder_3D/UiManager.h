@@ -50,5 +50,7 @@ private:
 	int frame;
 	int alpha;
 	int alphaAdd;
+
+
 };
 

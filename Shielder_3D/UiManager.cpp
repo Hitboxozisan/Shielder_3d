@@ -100,8 +100,13 @@ void UiManager::Draw(GameMain::State state,
 	}
 }
 
+/// <summary>
+/// ロックオン時のカーソルを表示
+/// </summary>
 void UiManager::DrawRockOnCursor()
 {
+	// カーソルの描画
+	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0.0f, imageHandle[ROCK_ON_CURSOR], TRUE);
 }
 
 

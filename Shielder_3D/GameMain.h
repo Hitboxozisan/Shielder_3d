@@ -28,9 +28,9 @@ public:
 
 	enum class State
 	{
-		START,
-		GAME,
-		GAME_OVER,
+		START,			// äJénéû
+		GAME,			// ÉQÅ[ÉÄíÜ
+		GAME_OVER,		// 
 		FINISH,
 		RESULT
 	};

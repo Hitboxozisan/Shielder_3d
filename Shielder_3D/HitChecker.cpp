@@ -29,7 +29,8 @@ void HitChecker::Check(Player* player,
 					   Shield* shield,
 					   Boss* boss)
 {
-	PlayerAndEnemy(player, boss);		// プレイヤーとエネミーの当たり判定
+	PlayerAndEnemy(player, boss);				// プレイヤーとエネミーの当たり判定
+	ShieldAndEnemy(player, shield, boss);		// シールドとエネミーの当たり判定
 }
 
 /// <summary>
@@ -40,16 +41,61 @@ void HitChecker::Check(Player* player,
 void HitChecker::PlayerAndEnemy(Player* player, Boss* boss)
 {
 	VECTOR sub = boss->GetPosition() - player->GetPosition();
+	// Y方向は考慮しない
+	sub.y = 0.0f;
+
 	// プレイヤーとエネミーの距離を計測
 	float distance = VSize(sub);
 	float radius = player->GetCollideRadius() + boss->GetCollideRadius();
+	
+	// 力を加える向きを設定
+	// 吹き飛ばす方向は逆方向
+	VECTOR forceDirection = VNorm(sub);
+	forceDirection = VScale(forceDirection, -1.0f);
 
 	// プレイヤーとエネミーの距離がお互いの当たり判定半径より小さい場合当たっている
 	if (distance <= radius)
 	{
-		
+		// 接触音を再生
+
+		// 各オブジェクト対応
+		player->HitOtherCharacter(forceDirection);
 	}
 
+}
+
+/// <summary>
+/// 盾とエネミーの当たり判定
+/// </summary>
+/// <param name="shield"></param>
+/// <param name="boss"></param>
+void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
+{
+	VECTOR sub = boss->GetPosition() - shield->GetPosition();
+	// Y方向は考慮しない
+	sub.y = 0.0f;
+
+	// 盾とエネミーの距離を計測
+	float distance = VSize(sub);
+	float radius = shield->GetCollideRadius() + boss->GetCollideRadius();
+
+	// 力を加える向きを設定
+	// エネミー
+	VECTOR enemyForceDirection = VNorm(sub);
+	
+	// プレイヤーはエネミーとは逆方向に
+	VECTOR playerForceDirection = VScale(enemyForceDirection, -1.0f);
+
+	// シールドとエネミーの距離がお互いの当たり判定半径より小さい場合当たっている
+	if (distance <= radius)
+	{
+		// 防御音再生
+
+		// 各オブジェクト対応
+		shield->HitOtherCharacter();
+		player->HitShieldOtherCharacter(playerForceDirection);
+		boss->HitShield(enemyForceDirection);
+	}
 }
 
 
