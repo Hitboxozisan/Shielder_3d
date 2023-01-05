@@ -2,13 +2,13 @@
 
 class Bullet;
 
-#include <list>
+#include<vector>
 
 class BulletCreater
 {
 public:
-	BulletCreater(std::list<Bullet*>* const activeList,
-				  std::list<Bullet*>* const deactiveList );
+	BulletCreater(std::vector<Bullet*>* const activeList,
+				  std::vector<Bullet*>* const deactiveList );
 	~BulletCreater();
 
 	Bullet* Create(const VECTOR& inPosition, const VECTOR& inDirection);
@@ -19,8 +19,8 @@ private:
 	BulletCreater(const BulletCreater&);
 	void operator=(const BulletCreater&);
 
-	//リストへのポインタ
-	std::list<Bullet*>* const activeBullet;
-	std::list<Bullet*>* const deActiveBullet;
+	// ベクターへのポインタ
+	std::vector<Bullet*>* const activeBullet;
+	std::vector<Bullet*>* const deActiveBullet;
 };
 

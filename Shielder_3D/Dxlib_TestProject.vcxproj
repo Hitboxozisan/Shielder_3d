@@ -155,9 +155,6 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletCreater.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraBase.cpp" />
-    <ClCompile Include="CameraMain.cpp" />
-    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DebugMenu.cpp" />
@@ -188,9 +185,6 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletCreater.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraBase.h" />
-    <ClInclude Include="CameraMain.h" />
-    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DebugMenu.h" />

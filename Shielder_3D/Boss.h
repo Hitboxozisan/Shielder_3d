@@ -30,12 +30,12 @@ public:
 	enum class AttackState
 	{
 		ASSAULT = 0,	// 突進攻撃
-		BULLET,			// 通常弾発射
-		SLOW_BULLET,	// 遅延弾発射
+		//BULLET,			// 通常弾発射
+		//SLOW_BULLET,	// 遅延弾発射
 		JUMP,			// ジャンプ
-		KICK,			// キック
-		JUDGE,			// どこにいるか判断
-		BACK,			// 画面端に戻る
+		//KICK,			// キック
+		//JUDGE,			// どこにいるか判断
+		//BACK,			// 画面端に戻る
 		THINKING,		// 行動思考・決定
 
 		ATTACK_AMOUST	// 行動パターン数
@@ -58,7 +58,9 @@ private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
 	static const VECTOR INITIAL_DIRECTION;		// 初期向き
 	static const VECTOR INITIAL_SCALE;			// 初期サイズ
+	static const VECTOR JUMP_FORCE;				// ジャンプ力
 	static const float  FRICTIONAL_FORCE;		// 摩擦力
+	static const float  GRAVITY;				// 重力
 	static const float  FORCE_AT_HIT_SHIELD;	// 盾と接触時の力
 	static const float  COLLIDE_RADIUS;			// 当たり判定球半径
 	static const float  VIBRATE_TIME;			// 振動する時間
@@ -68,9 +70,9 @@ private:
 
 	int	   assaultTime;					// 突進回数
 	float  vibrateTime;					// 振動時間
-	float  movedDistance;				// 突進距離
 	VECTOR startAssaultPosition;		// 突進開始位置
 	VECTOR force;						// 加わる力（跳ね返るときに主に使用）
+	VECTOR jumpForce;					// ジャンプ力
 
 	Player* player;						// Playerクラスのポインタ
 	Timer* timer;						// Timerクラスのポインタ
@@ -86,6 +88,9 @@ private:
 
 	// AttackStateに合わせて更新処理を変更する
 	// これは一時的なもの
+	void SetNextAttackUpdate();
+
+	// 次のStateを決定する（デバッグ用）
 	void SetNextAttackState();
 
 	// 各Stateごとの更新処理
@@ -97,9 +102,11 @@ private:
 	void UpdateJump();
 	void UpdateThinking();
 
+	void ChangeStateInitialize();		// 状態変化時の初期化
+	void ResetPositionYaw();			// Y座標を0.0fの位置に戻す
 	void FaceToPlayer();				// プレイヤーのほうを向く
 	void AssaultToPlayer();				// プレイヤーに向かって突進する
-	void Jump();						// ジャンプする
+	bool Jump();						// ジャンプする
 	bool Vibrate();						// 振動する
 	bool Slide();						// 防御されたときの反動
 };

@@ -12,7 +12,6 @@
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
-#include "CameraManager.h"
 #include "Timer.h"
 
 const VECTOR Player::INITIAL_POSITION    = VGet(500.0f, 0.0f, 100.0f);
@@ -25,9 +24,9 @@ const float  Player::MAX_NORMAL_SPEED    = 500.0f;
 const float  Player::MAX_DEFENSE_SPEED   = 200.0f;
 const float  Player::COLLIDE_RADIUS	     = 100.0f;
 const float  Player::DECREMENT_HIT_POINT = 10.0f;
-const float  Player::FORCE_AT_DAMAGE	 = 5.0f;
-const float  Player::FORCE_AT_DEFENSE    = 3.0f;
-const float  Player::FRICTIONAL_FORCE	 = -0.1f;
+const float  Player::FORCE_AT_DAMAGE	 = 500.0f;
+const float  Player::FORCE_AT_DEFENSE    = 300.0f;
+const float  Player::FRICTIONAL_FORCE	 = -400.0f;
 
 using namespace Math3d;		// VECTORの計算に使用
 
@@ -280,6 +279,8 @@ void Player::UpdateDamage()
 		InvincibleUpdate();
 		Move();*/
 	}
+
+	// 移動予定地に実際に移動する
 	MoveFinish();
 }
 
@@ -514,12 +515,12 @@ bool Player::DamageBouncePlayer()
 	VECTOR frictionalForce = VNorm(force);
 	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
 
-	nextPosition = VAdd(nextPosition, force);
-	force = VAdd(force, frictionalForce);
+	nextPosition = VAdd(nextPosition, force * deltaTime);
+	force = VAdd(force, frictionalForce * deltaTime);
 
 	//printfDx("")
-	// 跳ね返す力が0になったら終了する
-	if (VSize(force) <= 0.0f)
+	// 跳ね返す力が0に近くなったら終了する
+	if (VSize(force) <= 1.0f)
 	{
 		// 状態を NORMAL に
 		state = State::NORMAL;
@@ -540,11 +541,10 @@ bool Player::DefenseBouncePlayer()
 	VECTOR frictionalForce = VNorm(force);
 	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
 
-	nextPosition = VAdd(nextPosition, force);
-	force = VAdd(force, frictionalForce);
+	nextPosition = VAdd(nextPosition, force * deltaTime);
+	force = VAdd(force, frictionalForce * deltaTime);
 
-	//printfDx("")
-	// 跳ね返す力が0になったら終了する
+	// 跳ね返す力が0に近くなったら終了する
 	if (VSize(force) <= 0.0f)
 	{
 		// シールドを非活性化

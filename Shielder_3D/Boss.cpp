@@ -8,6 +8,7 @@
 #include "Pch.h"
 #include "Boss.h"
 #include "Player.h"
+#include "KeyManager.h"
 #include "ModelManager.h"
 #include "Random.h"
 #include "Timer.h"
@@ -19,13 +20,15 @@ using namespace Math3d;
 const VECTOR Boss::INITIAL_POSITION    = VGet(500.0f, 0.0f, 500.0f);
 const VECTOR Boss::INITIAL_DIRECTION   = VGet(0.0f, 0.0f, -1.0f);
 const VECTOR Boss::INITIAL_SCALE       = VGet(0.5f, 0.5f, 0.5f);
+const VECTOR Boss::JUMP_FORCE		   = VGet(0.0f, 800.0f, 0.0f);
 const float  Boss::FRICTIONAL_FORCE    = -0.1f;
+const float  Boss::GRAVITY			   = -10.0f;
 const float  Boss::FORCE_AT_HIT_SHIELD = 3.0f;
 const float  Boss::COLLIDE_RADIUS      = 100.0f;
 const float  Boss::VIBRATE_TIME		   = 2.0f;
-const float  Boss::ASSAULT_SPEED	   = 10.0f;
+const float  Boss::ASSAULT_SPEED	   = 1000.0f;
 const float  Boss::ASSAULT_DISTANCE    = 1000.0f;
-const int    Boss::ASSAULT_TIME		   = 8;
+const int    Boss::ASSAULT_TIME		   = 3;
 
 /// <summary>
 /// コンストラクタ
@@ -81,16 +84,21 @@ void Boss::Activate()
 
 	assaultTime = 0;
 	vibrateTime = 0.0f;
-	movedDistance = 0.0f;
 	startAssaultPosition = ZERO_VECTOR;
+	force = ZERO_VECTOR;
+	jumpForce = ZERO_VECTOR;
 
 	// 初期状態を NORMAL に（後に別途行動切り替え）
 	state = State::ATTACK;
 	pUpdate = &Boss::UpdateAttack;
 
+#ifdef DEBUG
+
+#endif // DEBUG
+
 	// 攻撃パターンを ASSAULT に
-	attackState = AttackState::ASSAULT;
-	pUpdateAttack = &Boss::UpdateAssault;
+	attackState = AttackState::THINKING;
+	pUpdateAttack = &Boss::UpdateThinking;
 
 	// モデルを初期位置に配置
 	MV1SetPosition(modelHandle, position);
@@ -174,6 +182,10 @@ void Boss::HitOtherCharacter(const VECTOR& forceDirection)
 	// 状態を DAMAGE に
 	//state = State::;
 	//pUpdate = &Player::UpdatePrevent;
+
+	// 次の行動を決定する
+	attackState = AttackState::THINKING;
+	pUpdateAttack = &Boss::UpdateThinking;
 }
 
 /// <summary>
@@ -204,20 +216,42 @@ const float Boss::GetCollideRadius()
 /// <summary>
 /// AttackStateに合わせて更新処理を変更する
 /// </summary>
-void Boss::SetNextAttackState()
+void Boss::SetNextAttackUpdate()
 {
 	switch (attackState)
 	{
 	case AttackState::ASSAULT:
-		pUpdate = &Boss::UpdateAssault;
+		pUpdateAttack = &Boss::UpdateAssault;
 		break;
 	case AttackState::JUMP:
-		pUpdate = &Boss::UpdateJump;
+		pUpdateAttack = &Boss::UpdateJump;
 		break;
-
 	default:
 		break;
 	}
+}
+
+/// <summary>
+/// 次のstateを決定する
+/// </summary>
+void Boss::SetNextAttackState()
+{
+	int attackStateAmount = static_cast<int>(AttackState::ATTACK_AMOUST);
+	AttackState nextAttack;
+
+	// 各数字キー入力処理
+	for (int i = 0; i < attackStateAmount; ++i)
+	{
+		// 各AttackState に変更（キーの番号は）
+		if (KeyManager::GetInstance().CheckJustPressed(i + 2))
+		{
+			nextAttack = static_cast<AttackState>(i);
+			// 行動を決定
+			attackState = nextAttack;
+			SetNextAttackUpdate();
+		}
+	}
+
 }
 
 /// <summary>
@@ -243,6 +277,7 @@ void Boss::UpdateSlide()
 	if (Slide())
 	{
 		state = State::ATTACK;
+		pUpdate = &Boss::UpdateAttack;
 		pUpdateAttack = &Boss::UpdateThinking;
 	}
 }
@@ -266,6 +301,12 @@ void Boss::UpdateAssault()
 			FaceToPlayer();		
 		}
 	}
+	// 規定回数まで突進が終わったら次の行動を決定する
+	else
+	{
+		attackState = AttackState::THINKING;
+		pUpdateAttack = &Boss::UpdateThinking;
+	}
 }
 
 /// <summary>
@@ -273,7 +314,11 @@ void Boss::UpdateAssault()
 /// </summary>
 void Boss::UpdateJump()
 {
-
+	if (Jump())
+	{
+		attackState = AttackState::ASSAULT;
+		pUpdateAttack = &Boss::UpdateAssault;
+	}
 }
 
 /// <summary>
@@ -286,7 +331,20 @@ void Boss::UpdateThinking()
 	AttackState nextState;
 
 	// 各種値をリセット
+	if (timer != nullptr)
+	{
+		timer->Reset();
+	}
 	assaultTime = 0;
+	
+
+#ifdef DEBUG
+
+	// 次の行動を決定
+	SetNextAttackState();
+	ChangeStateInitialize();
+
+#else
 
 	// 前回と違う行動にする
 	do
@@ -298,8 +356,31 @@ void Boss::UpdateThinking()
 
 	// 次の状態に移行する
 	attackState = nextState;
-	SetNextAttackState();
+	SetNextAttackUpdate();
 
+#endif // DEBUG
+	
+}
+
+/// <summary>
+/// 状態変化時の初期化
+/// </summary>
+void Boss::ChangeStateInitialize()
+{
+	// JUMP 時の初期化処理
+	if (attackState == AttackState::JUMP)
+	{
+		// ジャンプ力を設定
+		jumpForce = JUMP_FORCE;
+	}
+}
+
+/// <summary>
+/// Y座標を0.0fの位置に戻す
+/// </summary>
+void Boss::ResetPositionYaw()
+{
+	
 }
 
 /// <summary>
@@ -318,10 +399,12 @@ void Boss::FaceToPlayer()
 /// </summary>
 void Boss::AssaultToPlayer()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	VECTOR speed = direction * ASSAULT_SPEED;
 	VECTOR sub = position - startAssaultPosition;
 	float inDistance = VSize(sub);
 
+	// 指定距離突進したら
 	if (inDistance >= ASSAULT_DISTANCE)
 	{
 		// 終了する
@@ -331,15 +414,31 @@ void Boss::AssaultToPlayer()
 		return;
 	}
 
-	nextPosition = VAdd(nextPosition, speed);
+	nextPosition = VAdd(nextPosition, speed * deltaTime);
 	
 }
 
 /// <summary>
 /// ジャンプさせる
 /// </summary>
-void Boss::Jump()
+bool Boss::Jump()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
+	jumpForce.y += GRAVITY;
+
+	// 一定高さまでジャンプしたら
+	if (jumpForce.y <= 0.0f)
+	{
+		jumpForce = ZERO_VECTOR;
+
+		return true;
+	}
+
+	// 移動
+	nextPosition = VAdd(nextPosition, jumpForce * deltaTime);
+
+	return false;
 
 }
 
@@ -349,27 +448,29 @@ void Boss::Jump()
 /// <returns></returns>
 bool Boss::Vibrate()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	if (timer == nullptr)
 	{
 		timer = new Timer(VIBRATE_TIME);
 	}
-
-	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	
-	float randomX = Random::GetInstance().GetRandomFloat(-2, 2);
-	float randomZ = Random::GetInstance().GetRandomFloat(-2, 2);
+	float randomX = Random::GetInstance().GetRandomFloat(-200, 200);
+	float randomZ = Random::GetInstance().GetRandomFloat(-200, 200);
 
 	// ランダムな方向に移動し続ける
 	VECTOR randomForce = VGet(randomX, 0.0f, randomZ);
-	nextPosition = prevPosition;
-	position = prevPosition;
 	
 	timer->Update(deltaTime);
 
 	// 指定秒数振動させる
 	if (!timer->IsTimeout())
 	{
-		nextPosition = VAdd(nextPosition, randomForce);
+
+		nextPosition = prevPosition;
+		position = prevPosition;
+
+		nextPosition = VAdd(nextPosition, randomForce * deltaTime);
+
 		// 突進開始位置を更新する
 		startAssaultPosition = position;
 		return false;
@@ -389,8 +490,8 @@ bool Boss::Slide()
 	VECTOR frictionalForce = VNorm(force);
 	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
 
-	nextPosition = VAdd(nextPosition, force);
-	force = VAdd(force, frictionalForce);
+	nextPosition = VAdd(nextPosition, force * deltaTime);
+	force = VAdd(force, frictionalForce * deltaTime);
 
 	// 跳ね返す力が0になったら終了する
 	if (VSize(force) <= 0.0f)

@@ -30,6 +30,15 @@
     <Filter Include="ソース ファイル\Debug">
       <UniqueIdentifier>{2c995fa6-64a2-4854-920f-d90aebf3e582}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Collision">
+      <UniqueIdentifier>{14c961f3-dd3c-4af2-9ac2-3d3386d93d97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Shield">
+      <UniqueIdentifier>{7582a489-3968-4e83-9378-125f3ea0afd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Common">
+      <UniqueIdentifier>{f7b5a45e-c23a-4690-9f1f-24ab3b253d33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -37,9 +46,6 @@
     </ClCompile>
     <ClCompile Include="DeltaTime.cpp">
       <Filter>ソース ファイル\System</Filter>
-    </ClCompile>
-    <ClCompile Include="GameDefine.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="KeyManager.cpp">
       <Filter>ソース ファイル\System</Filter>
@@ -58,15 +64,6 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>ソース ファイル\Character</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraBase.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraMain.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraManager.cpp">
-      <Filter>ソース ファイル\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>ソース ファイル\Character</Filter>
@@ -95,12 +92,6 @@
     <ClCompile Include="DebugMenu.cpp">
       <Filter>ソース ファイル\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Shield.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="HitChecker.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Boss.cpp">
       <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
@@ -113,9 +104,6 @@
     <ClCompile Include="UiManager.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
@@ -125,16 +113,22 @@
     <ClCompile Include="BulletCreater.cpp">
       <Filter>ソース ファイル\Mover</Filter>
     </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="HitChecker.cpp">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Shield.cpp">
+      <Filter>ソース ファイル\Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefine.cpp">
+      <Filter>ソース ファイル\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
       <Filter>ソース ファイル\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Pch.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefine.h">
-      <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="KeyManager.h">
       <Filter>ソース ファイル\System</Filter>
@@ -153,15 +147,6 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>ソース ファイル\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraBase.h">
-      <Filter>ソース ファイル\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraMain.h">
-      <Filter>ソース ファイル\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraManager.h">
-      <Filter>ソース ファイル\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>ソース ファイル\Character</Filter>
@@ -190,12 +175,6 @@
     <ClInclude Include="DebugMenu.h">
       <Filter>ソース ファイル\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Shield.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="HitChecker.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Boss.h">
       <Filter>ソース ファイル\Character</Filter>
     </ClInclude>
@@ -208,9 +187,6 @@
     <ClInclude Include="UiManager.h">
       <Filter>ソース ファイル\System</Filter>
     </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>ソース ファイル\System</Filter>
     </ClInclude>
@@ -219,6 +195,21 @@
     </ClInclude>
     <ClInclude Include="BulletCreater.h">
       <Filter>ソース ファイル\Mover</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="HitChecker.h">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Shield.h">
+      <Filter>ソース ファイル\Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefine.h">
+      <Filter>ソース ファイル\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Pch.h">
+      <Filter>ソース ファイル\Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

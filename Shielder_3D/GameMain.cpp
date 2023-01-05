@@ -12,8 +12,6 @@
 #include "Player.h"
 #include "Character.h"
 #include "Camera.h"
-#include "CameraBase.h"
-#include "CameraManager.h"
 #include "ModelManager.h"
 #include "UiManager.h"
 #include "HitChecker.h"
@@ -45,9 +43,6 @@ GameMain::~GameMain()
 /// </summary>
 void GameMain::Initialize()
 {
-	// カメラ管理クラス（使用しない可能性大）
-	cameraManager = new CameraManager();
-	cameraManager->Initialize();
  	// カメラクラス
 	camera = new Camera();
 	camera->Initialize();
