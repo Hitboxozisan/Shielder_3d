@@ -8,6 +8,8 @@
 #include "Pch.h"
 #include "Boss.h"
 #include "Player.h"
+#include "Bullet.h"
+#include "BulletCreater.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
 #include "Random.h"
@@ -27,14 +29,19 @@ const float  Boss::FORCE_AT_HIT_SHIELD = 3.0f;
 const float  Boss::COLLIDE_RADIUS      = 100.0f;
 const float  Boss::VIBRATE_TIME		   = 2.0f;
 const float  Boss::ASSAULT_SPEED	   = 1000.0f;
-const float  Boss::ASSAULT_DISTANCE    = 1000.0f;
+const float  Boss::ASSAULT_DISTANCE    = 1500.0f;
+const float  Boss::TELEPORT_DISTANCE   = 500.0f;
+const float  Boss::SHOT_INTERVAL	   = 2.0f;
 const int    Boss::ASSAULT_TIME		   = 3;
+const int	 Boss::SHOT_TIME		   = 3;
 
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Boss::Boss(Player* inPlayer)
+Boss::Boss(Player* inPlayer,
+		   BulletCreater* const inBulletCreater)
 	:player(inPlayer)
+	,bulletCreater(inBulletCreater)
 {
 	// 処理なし
 }
@@ -83,6 +90,8 @@ void Boss::Activate()
 	collisionSphere.radius = COLLIDE_RADIUS;
 
 	assaultTime = 0;
+	shotTime = 0;
+	hitPoint = 50.0f;
 	vibrateTime = 0.0f;
 	startAssaultPosition = ZERO_VECTOR;
 	force = ZERO_VECTOR;
@@ -96,9 +105,10 @@ void Boss::Activate()
 
 #endif // DEBUG
 
+	ChangeAttackState(AttackState::THINKING);
 	// 攻撃パターンを ASSAULT に
-	attackState = AttackState::THINKING;
-	pUpdateAttack = &Boss::UpdateThinking;
+	//attackState = AttackState::THINKING;
+	//pUpdateAttack = &Boss::UpdateThinking;
 
 	// モデルを初期位置に配置
 	MV1SetPosition(modelHandle, position);
@@ -133,7 +143,7 @@ void Boss::Update()
 void Boss::Draw()
 {
 	// 描画しないフレームなら描画しない
-	if (state == State::DEAD)
+	if (state == State::NONE || state == State::DEAD)
 	{
 		return;
 	}
@@ -184,8 +194,9 @@ void Boss::HitOtherCharacter(const VECTOR& forceDirection)
 	//pUpdate = &Player::UpdatePrevent;
 
 	// 次の行動を決定する
-	attackState = AttackState::THINKING;
-	pUpdateAttack = &Boss::UpdateThinking;
+	ChangeAttackState(AttackState::THINKING);
+	//attackState = AttackState::THINKING;
+	//pUpdateAttack = &Boss::UpdateThinking;
 }
 
 /// <summary>
@@ -198,10 +209,18 @@ void Boss::HitShield(const VECTOR& forceDirection)
 	force = forceDirection;
 	force = VScale(force, FORCE_AT_HIT_SHIELD);
 
-
 	// 状態を DAMAGE に
 	state = State::SLIDE;
 	pUpdate = &Boss::UpdateSlide;
+}
+
+/// <summary>
+/// 現在のHitPointを返す
+/// </summary>
+/// <returns></returns>
+const float Boss::GetHitPoint()
+{
+	return hitPoint;
 }
 
 /// <summary>
@@ -218,13 +237,23 @@ const float Boss::GetCollideRadius()
 /// </summary>
 void Boss::SetNextAttackUpdate()
 {
+	// 各AttackStateごとに更新処理を変更する
 	switch (attackState)
 	{
 	case AttackState::ASSAULT:
 		pUpdateAttack = &Boss::UpdateAssault;
 		break;
+	case AttackState::BULLET:
+		pUpdateAttack = &Boss::UpdateBullet;
+		break;
 	case AttackState::JUMP:
 		pUpdateAttack = &Boss::UpdateJump;
+		break;
+	case AttackState::TELEPORT:
+		pUpdateAttack = &Boss::UpdateTeleport;
+		break;
+	case AttackState::THINKING:
+		pUpdateAttack = &Boss::UpdateThinking;
 		break;
 	default:
 		break;
@@ -247,8 +276,9 @@ void Boss::SetNextAttackState()
 		{
 			nextAttack = static_cast<AttackState>(i);
 			// 行動を決定
-			attackState = nextAttack;
-			SetNextAttackUpdate();
+			ChangeAttackState(nextAttack);
+			//attackState = nextAttack;
+			//SetNextAttackUpdate();
 		}
 	}
 
@@ -278,7 +308,8 @@ void Boss::UpdateSlide()
 	{
 		state = State::ATTACK;
 		pUpdate = &Boss::UpdateAttack;
-		pUpdateAttack = &Boss::UpdateThinking;
+		ChangeAttackState(AttackState::THINKING);
+		//pUpdateAttack = &Boss::UpdateThinking;
 	}
 }
 
@@ -304,9 +335,43 @@ void Boss::UpdateAssault()
 	// 規定回数まで突進が終わったら次の行動を決定する
 	else
 	{
-		attackState = AttackState::THINKING;
-		pUpdateAttack = &Boss::UpdateThinking;
+		ChangeAttackState(AttackState::THINKING);
+		//attackState = AttackState::THINKING;
+		//pUpdateAttack = &Boss::UpdateThinking;
 	}
+}
+
+/// <summary>
+/// BULLET時の更新処理
+/// </summary>
+void Boss::UpdateBullet()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
+	if (timer == nullptr)
+	{
+		timer = new Timer(SHOT_INTERVAL);
+	}
+	// タイマーを更新
+	timer->Update(deltaTime);
+
+	// プレイヤーのほうを向く
+	FaceToPlayer();
+
+	// 規定回数まで発射する
+	if (shotTime <= SHOT_TIME && timer->IsTimeout())
+	{
+		ReloadBullet();			// 弾の生成
+		ShootBullet();			// 弾を発射する
+		shotTime++;				// 発射回数カウント
+		timer->Reset();			// タイマーをリセット
+	}
+	// 規定回数発射すると次の行動に移る
+	else if(shotTime > SHOT_TIME)
+	{
+		ChangeAttackState(AttackState::THINKING);
+	}
+
 }
 
 /// <summary>
@@ -314,11 +379,54 @@ void Boss::UpdateAssault()
 /// </summary>
 void Boss::UpdateJump()
 {
+	// ジャンプし終わったら次の行動に移る
 	if (Jump())
 	{
-		attackState = AttackState::ASSAULT;
-		pUpdateAttack = &Boss::UpdateAssault;
+		ChangeAttackState(AttackState::ASSAULT);
+		//attackState = AttackState::ASSAULT;
+		//pUpdateAttack = &Boss::UpdateAssault;
 	}
+}
+
+/// <summary>
+/// TELEPORT時の更新処理
+/// </summary>
+void Boss::UpdateTeleport()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	// タイマーをリセット
+	if (timer == nullptr)
+	{
+		timer = new Timer(1.0f);
+	}
+
+	// タイマーを更新
+	timer->Update(deltaTime);
+
+	// State を NONE にし存在を消滅後一定時間経過後 State を NORMAL に戻す
+	if (timer->IsTimeout())
+	{
+		// テレポートエフェクトを生成する
+
+		// プレイヤーから一定距離の位置に瞬間移動する
+		Teleport();
+		state = State::ATTACK;
+		ChangeAttackState(AttackState::THINKING);
+		//attackState = AttackState::THINKING;
+	}
+	else
+	{
+		// ボスの状態を変更する
+		if (state != State::NONE)
+		{
+			// テレポートエフェクトを生成する
+
+
+			state = State::NONE;
+		}
+	}
+
+	
 }
 
 /// <summary>
@@ -375,6 +483,14 @@ void Boss::ChangeStateInitialize()
 	}
 }
 
+// 攻撃パターン変更
+void Boss::ChangeAttackState(AttackState nextState)
+{
+	// 攻撃パターン変更
+	attackState = nextState;
+	SetNextAttackUpdate();
+}
+
 /// <summary>
 /// Y座標を0.0fの位置に戻す
 /// </summary>
@@ -416,6 +532,32 @@ void Boss::AssaultToPlayer()
 
 	nextPosition = VAdd(nextPosition, speed * deltaTime);
 	
+}
+
+/// <summary>
+/// 弾を補充する
+/// </summary>
+void Boss::ReloadBullet()
+{
+	// 弾を生成可能なら生成する
+	if (bulletCreater->IsCreatableCheck())
+	{
+		bullet = bulletCreater->Create(position, direction);
+	}
+}
+
+/// <summary>
+/// 弾を発射する
+/// </summary>
+void Boss::ShootBullet()
+{
+	// 弾を保持していないなら処理しない
+	if (bullet == nullptr)
+	{
+		return;
+	}
+
+	bullet->Shoot();
 }
 
 /// <summary>
@@ -476,6 +618,29 @@ bool Boss::Vibrate()
 		return false;
 	}
 	
+	return true;
+}
+
+/// <summary>
+/// プレイヤーから一定距離の位置に瞬間移動する
+/// </summary>
+/// <returns></returns>
+bool Boss::Teleport()
+{
+	// プレイヤーから半径（一定距離）の場所に瞬間移動する
+	VECTOR origin = player->GetPosition();
+	VECTOR newPosition = origin;
+	float angle = Random::GetInstance().GetRandomFloat(0.0f, 2.0f);
+
+	// 出現位置を算出
+	newPosition.x = origin.x + TELEPORT_DISTANCE * cosf(angle * DX_PI);
+	newPosition.z = origin.z + TELEPORT_DISTANCE * sinf(angle * DX_PI);
+	// 念のためY座標をリセットする
+	newPosition.y = 0.0f;
+
+	// 位置を設定
+	nextPosition = newPosition;
+
 	return true;
 }
 

@@ -5,7 +5,8 @@
 class Bullet final : public Mover
 {
 public:
-	enum State
+	// 弾の状態
+	enum class State
 	{
 		NONE,			// 存在しない
 		NORMAL,			// 滞空
@@ -23,7 +24,8 @@ public:
 	bool Update();								// 更新処理
 	void Draw();								// 描画処理
 
-	void Shoot(int attackType);					// 発射処理
+	void RotateToEnemy();						// エネミーを軸に回転させる
+	void Shoot();								// 発射処理
 
 	// エネミーの前に設置する
 	void SetToFrontOfEnemy(const VECTOR& inPosition, const VECTOR& inDirection);
@@ -38,10 +40,11 @@ public:
 	
 private:
 	//定数
-	static const float NORMAL_SPEED;						// 通常球移動速度
-	static const float SLOW_SPEED;							// 遅延弾移動速度
-	static const float SCALE_BY_DIRECTION_FOR_CORRECTION;	// 位置補正用に向きベクトルに掛ける倍率
-	static const float COLLIDE_RADIUS;			   			// 当たり判定球半径
+	static const VECTOR INITIAL_SCALE;						// 初期サイズ
+	static const float  NORMAL_SPEED;						// 通常球移動速度
+	static const float  SLOW_SPEED;							// 遅延弾移動速度
+	static const float  SCALE_BY_DIRECTION_FOR_CORRECTION;	// 位置補正用に向きベクトルに掛ける倍率
+	static const float  COLLIDE_RADIUS;			   			// 当たり判定球半径
 
 	State state;		// 現在の状態
 	float speed;		// 現在の速度
@@ -49,6 +52,9 @@ private:
 
 	My3dLib::Sphere collisionSphere;		// 当たり判定用球
 
-	void Move();		// 移動処理
+	void SetShootDirection();	// モデルの向きを SHOOT 用に設定
+	void ResetDirection();		// モデルの向きを NORMAL 時に戻す
+	void Move();				// 移動処理
+	void MoveFinish();			// 移動予定地に実際に移動する
 };
 

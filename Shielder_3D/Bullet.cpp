@@ -1,19 +1,20 @@
 #include "Pch.h"
 
 #include "Bullet.h"
-
+#include "DeltaTime.h"
 #include "ModelManager.h"
 
-const float Bullet::NORMAL_SPEED   = 16.0f;
-const float Bullet::SLOW_SPEED     = 8.0f;
-const float Bullet::SCALE_BY_DIRECTION_FOR_CORRECTION = 1.0f;
-const float Bullet::COLLIDE_RADIUS = 50.0f;
+const VECTOR Bullet::INITIAL_SCALE = VGet(0.5f, 0.5f, 0.5f);
+const float  Bullet::NORMAL_SPEED   = 500.0f;
+const float  Bullet::SLOW_SPEED     = 200.0f;
+const float  Bullet::SCALE_BY_DIRECTION_FOR_CORRECTION = 1.0f;
+const float  Bullet::COLLIDE_RADIUS = 50.0f;
 
 /// <summary>
 /// コンストラクタ
 /// </summary>
 Bullet::Bullet()
-	:state(NONE)
+	:state(State::NORMAL)
 	,velocity()
 	,speed(0.0f)
 {
@@ -65,7 +66,8 @@ void Bullet::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 
 	velocity = ZERO_VECTOR;
 	
-	state = NORMAL;
+	speed = NORMAL_SPEED;
+	state = State::NORMAL;
 
 	collisionSphere.localCenter = ZERO_VECTOR;
 	collisionSphere.radius = COLLIDE_RADIUS;
@@ -73,7 +75,7 @@ void Bullet::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 
 	SetToFrontOfEnemy(inPosition, inDirection);					// エネミーの前方に位置調整
 
-	MV1SetScale(modelHandle, VGet(0.5f, 0.5f, 0.2f));			// モデル拡大縮小
+	MV1SetScale(modelHandle, INITIAL_SCALE);					// モデル拡大縮小
 	MV1SetRotationXYZ(modelHandle, VGet(0.0f, 1.5f, 0.0f));		// モデルの向きを設定
 }
 
@@ -82,7 +84,7 @@ void Bullet::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 /// </summary>
 void Bullet::Deactivate()
 {
-	state = NONE;
+	state = State::NONE;
 }
 
 /// <summary>
@@ -92,29 +94,18 @@ void Bullet::Deactivate()
 bool Bullet::Update()
 {
 	//存在しないなら処理しない
-	if (state == NONE)
+	if (state == State::NONE)
 	{
 		return false;
 	}
 
-	//エネミー攻撃が通常球なら
-	if (state == NORMAL)
-	{
-		speed = NORMAL_SPEED;
-	}
-	else
-	{
-		speed = SLOW_SPEED;
-	}
-
-	//テスト用direction
-	//direction = VGet(0.5f, 0.0f, 0.0f);
-
 	//飛んでいるときの処理
-	if (state == NORMAL ||
-		state == SLOW)
+	if (state == State::NORMAL ||
+		state == State::SHOOT)
 	{
 		Move();
+		MoveFinish();
+
 		return true;
 	}
 
@@ -127,13 +118,10 @@ bool Bullet::Update()
 void Bullet::Draw()
 {
 	// 存在しないなら描画しない
-	if (state == NONE)
+	if (state == State::NONE)
 	{
 		return;
 	}
-
-	MV1SetPosition(modelHandle, position);		// 3Dモデルのポジション設定
-	
 
 	MV1DrawModel(modelHandle);					// 3Dモデルの描画
 
@@ -147,21 +135,21 @@ void Bullet::Draw()
 }
 
 /// <summary>
+/// エネミーを軸に回転させる
+/// </summary>
+void Bullet::RotateToEnemy()
+{
+
+}
+
+/// <summary>
 /// 
 /// </summary>
 /// <param name="attackType"></param>
-void Bullet::Shoot(int attackType)
+void Bullet::Shoot()
 {
-	//エネミー攻撃が通常弾なら
-	if (attackType == 1)		
-	{
-		state = NORMAL;
-	}
-	else if(attackType == 2)
-	{
-		state = SLOW;
-	}
-	
+	// 発射状態にする
+	state = State::SHOOT;
 }
 
 /// <summary>
@@ -177,7 +165,7 @@ void Bullet::SetToFrontOfEnemy(const VECTOR& inPosition, const VECTOR& inDirecti
 	//エネミーの前方に位置調整
 	VECTOR distanceToPlayer = VScale(direction, SCALE_BY_DIRECTION_FOR_CORRECTION);
 
-	position = VAdd(position, distanceToPlayer);
+	nextPosition = VAdd(nextPosition, distanceToPlayer);
 }
 
 /// <summary>
@@ -195,8 +183,8 @@ Bullet::State Bullet::GetState() const
 /// <returns></returns>
 bool Bullet::IsCollidableState() const
 {
-	if (state == NORMAL ||
-		state == SLOW)
+	if (state == State::NORMAL ||
+		state == State::SHOOT)
 	{
 		return true;
 	}
@@ -226,7 +214,7 @@ void Bullet::OnOutField()
 /// </summary>
 void Bullet::OnHitBreak()
 {
-	state = NONE;
+	state = State::NONE;
 }
 
 /// <summary>
@@ -234,9 +222,46 @@ void Bullet::OnHitBreak()
 /// </summary>
 void Bullet::Move()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	//フィールド外に出たら消滅させる
 
+	nextPosition = VAdd(nextPosition, VScale(direction, speed * deltaTime));	//向いている方向に移動
+	collisionSphere.Move(position);												//当たり判定球移動
+}
 
-	position = VAdd(position, VScale(direction, speed));	//向いている方向に移動
-	collisionSphere.Move(position);				//当たり判定球移動
+/// <summary>
+/// 移動予定地に実際に移動する
+/// </summary>
+void Bullet::MoveFinish()
+{
+	prevPosition = position;
+	position = nextPosition;
+	direction = nextDirection;
+
+	// モデルの位置を設定
+	MV1SetPosition(modelHandle, position);
+
+	// モデルの向きを設定
+	MV1SetRotationYUseDir(modelHandle, direction, 0.0f);
+}
+
+/// <summary>
+/// モデルの向きを発射用に設定
+/// </summary>
+void Bullet::SetShootDirection()
+{
+	// 発射用角度を設定
+	VECTOR newDirection;
+
+	// モデルの向きを設定
+
+}
+
+/// <summary>
+/// モデルの向きを NORMAL 時に戻す
+/// </summary>
+void Bullet::ResetDirection()
+{
+	// 元の角度に戻す
+
 }

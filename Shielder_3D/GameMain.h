@@ -8,6 +8,8 @@
 class CameraManager;
 class Player;
 class Boss;
+class Bullet;
+class BulletCreater;
 class Camera;
 class Field;
 class UiManager;
@@ -44,13 +46,14 @@ private:
 	static const int   ENEMY_AMOUNT;
 	static const int   CHARACTER_AMOUNT;
 	static const int   MAX_METEOR_AMOUNT;
-	static const float MAX_BULLET_AMOUNT;
+	static const float MAX_BULLET_AMOUNT;			// ’e‚ÌÅ‘å”
 	
 	State state;
 
 	CameraManager *cameraManager;
 	Player *player;
 	Boss* boss;
+	BulletCreater* bulletCreater;
 	Camera* camera;
 	Field* field;
 	UiManager* uiManager;
@@ -58,8 +61,8 @@ private:
 
 	//std::vector<BackgroundMeteor*> activeBackgroundMeteor;
 	//std::vector<BackgroundMeteor*> deactiveBackgroundMeteor;
-	//std::list<Bullet*> activeBullet;
-	//std::list<Bullet*> deactiveBullet;
+	std::list<Bullet*> activeBullet;
+	std::list<Bullet*> deactiveBullet;
 
 	// Šeó‘Ô‚É‰‚¶‚½XVˆ—
 	void UpdateStart();

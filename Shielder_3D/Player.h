@@ -38,6 +38,7 @@ public:
 	void HitShieldOtherCharacter(const VECTOR& forceDirection);	// シールドが他のキャラクターと接触した
 
 	const float GetCollideRadius();			// 当たり判定球半径を返す
+	const float GetHitPoint();				// 現在のHitPointを返す
 	const State GetCurrentState();			// 現在の状態を返す
 		  Shield *GetShieldPointer();		// シールドのポインタを返す
 

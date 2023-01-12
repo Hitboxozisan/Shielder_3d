@@ -12,6 +12,8 @@
 #include "Player.h"
 #include "Character.h"
 #include "Camera.h"
+#include "Bullet.h"
+#include "BulletCreater.h"
 #include "ModelManager.h"
 #include "UiManager.h"
 #include "HitChecker.h"
@@ -43,6 +45,9 @@ GameMain::~GameMain()
 /// </summary>
 void GameMain::Initialize()
 {
+	// 弾生成クラス
+	bulletCreater = new BulletCreater(&activeBullet, &deactiveBullet);
+
  	// カメラクラス
 	camera = new Camera();
 	camera->Initialize();
@@ -52,8 +57,16 @@ void GameMain::Initialize()
 	player->Initialize();
 
 	// ボスクラス
-	boss = new Boss(player);
+	boss = new Boss(player,
+					bulletCreater);
 	boss->Initialize();
+
+	// バレットクラス
+	for (int i = 0; i < MAX_BULLET_AMOUNT; ++i)
+	{
+		deactiveBullet.push_back(new Bullet());
+		deactiveBullet.back()->Initialize();
+	}
 
 	// フィールドクラス
 	field = new Field();
@@ -63,6 +76,7 @@ void GameMain::Initialize()
 	uiManager = new UiManager();
 	uiManager->Initialize();
 
+	// 当たり判定クラス
 	hitChecker = new HitChecker();
 }
 
@@ -81,6 +95,7 @@ void GameMain::Activate()
 {
 	player->Activate();						// プレイヤークラス活性化処理
 	boss->Activate();						// ボスクラス活性化処理
+	
 	camera->Activate(player->GetPosition(),
 					 boss->GetPosition());	// カメラクラス活性化処理
 	uiManager->Activate();					// Ui管理クラス活性化処理
@@ -136,9 +151,24 @@ void GameMain::Draw()
 	field->Draw();
 	player->Draw();
 	boss->Draw();
+
+	// 攻撃用弾描画
+	for (auto itr = activeBullet.begin(); itr != activeBullet.end(); ++itr)
+	{
+		(*itr)->Draw();
+	}
+	// 待機用弾描画
+	for (auto itr = deactiveBullet.begin(); itr != deactiveBullet.end(); ++itr)
+	{
+		(*itr)->Draw();
+	}
+
+	// Ui描画
 	uiManager->Draw(state, 
 					player->GetPosition(), 
-					boss->GetPosition());
+					boss->GetPosition(),
+					player->GetHitPoint(),
+					boss->GetHitPoint());
 }
 
 void GameMain::UpdateStart()
@@ -152,6 +182,23 @@ void GameMain::UpdateGame()
 	boss->Update();
 	camera->Update(player->GetPosition(),
 				   boss->GetPosition());
+
+	// アクティブな弾の更新処理
+	for (auto itr = activeBullet.begin(); itr != activeBullet.end();)
+	{
+		// 消えていたら非アクティブリスト
+		if ((*itr)->Update() == false)
+		{
+			(*itr)->Deactivate();
+			deactiveBullet.push_back(*itr);
+			itr = activeBullet.erase(itr);
+		}
+		else
+		{
+			++itr;
+		}
+	}
+
 	// 当たり判定処理
 	// 盾の処理をどうにかしたい
 	// 盾は盾で個別に処理するべきか？

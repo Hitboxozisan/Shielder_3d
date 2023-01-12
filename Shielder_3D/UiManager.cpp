@@ -77,9 +77,12 @@ void UiManager::Activate()
 /// <param name="state"></param>
 /// <param name="inPlayerPos">プレイヤーの座標</param>
 /// <param name="inEnemyPos">エネミーの座標</param>
+/// <param name="inPlayerHitPoint">プレイヤーのHitPoint</param>
 void UiManager::Draw(GameMain::State state, 
 					 VECTOR inPlayerPos, 
-					 VECTOR inEnemyPos)
+					 VECTOR inEnemyPos,
+					 float inPlayerHitPoint,
+					 float inEnemyHitPoint)
 {
 	++frame;
 	switch (state)
@@ -87,16 +90,23 @@ void UiManager::Draw(GameMain::State state,
 	case GameMain::State::START:
 		
 		break;
+
 	case GameMain::State::GAME:
-		
+		// プレイヤーの体力描画
+		DrawPlayerHitPoint(inPlayerHitPoint);
+		DrawEnemyHitPoint(inEnemyHitPoint);
 		break;
+
 	case GameMain::State::GAME_OVER:
 		break;
+
 	case GameMain::State::RESULT:
 
 		break;
+
 	default:
 		break;
+
 	}
 }
 
@@ -107,6 +117,50 @@ void UiManager::DrawRockOnCursor()
 {
 	// カーソルの描画
 	DrawRotaGraph(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 1.0f, 0.0f, imageHandle[ROCK_ON_CURSOR], TRUE);
+}
+
+/// <summary>
+/// プレイヤーのHitPointを描画する
+/// </summary>
+/// <param name="inPlayerHitPoint">プレイヤーのHitPoint</param>
+void UiManager::DrawPlayerHitPoint(float inPlayerHitPoint)
+{
+	// この辺りは後に修正
+	// 最大体力を100とする
+	float playerMaxHitPoint = 100.0f;
+	int PosLX = 55; int PosLY = 1000;
+	int PosRX = PosLX + 490 * (inPlayerHitPoint / playerMaxHitPoint);
+	int PosRY = 1025;
+	int uiPosX = 300; int uiPosY = 1000;
+
+	// プレイヤーのHitPointを表示
+	DrawBox(PosLX, PosLY, PosRX, PosRY, GetColor(0, 255, 0), TRUE);
+	// HitPointゲージ枠表示
+	DrawRotaGraph(uiPosX, uiPosY, 0.8f, 0.0f, imageHandle[HP_PLAYER], TRUE);
+}
+
+/// <summary>
+/// エネミーのHitPointを描画する
+/// </summary>
+/// <param name="inEnemyHitPoint">エネミーのHitPoint</param>
+void UiManager::DrawEnemyHitPoint(float inEnemyHitPoint)
+{
+	// この辺りは後に修正
+	// 最大体力を100とする
+	float enemyMaxHitPoint = 100.0f;
+	int PosLX = 943; int PosLY = 90;
+	int PosRX = PosLX + 750 * (inEnemyHitPoint / enemyMaxHitPoint);
+	int PosRX2 = (PosLX - 10) + 750 * (-inEnemyHitPoint / enemyMaxHitPoint);
+	int PosRY = 110;
+	int uiPosX = 937; int uiPosY = 100;
+
+	int subGreen = inEnemyHitPoint;
+
+	// エネミーHitPoint表示
+	DrawBox(PosLX, PosLY, PosRX, PosRY, GetColor(246, 200 - subGreen, 0), TRUE);			// 右側
+	DrawBox(PosLX - 10, PosLY, PosRX2, PosRY, GetColor(246, 200 - subGreen, 0), TRUE);		// 左側
+	// HitPointゲージ枠表示
+	DrawRotaGraph(uiPosX, uiPosY, 0.8, 0.0, imageHandle[HP_ENMEY], TRUE);
 }
 
 

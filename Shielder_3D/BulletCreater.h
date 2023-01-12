@@ -2,17 +2,17 @@
 
 class Bullet;
 
-#include<vector>
+#include<list>
 
 class BulletCreater
 {
 public:
-	BulletCreater(std::vector<Bullet*>* const activeList,
-				  std::vector<Bullet*>* const deactiveList );
+	BulletCreater(std::list<Bullet*>* const activeList,
+				  std::list<Bullet*>* const deactiveList );
 	~BulletCreater();
 
-	Bullet* Create(const VECTOR& inPosition, const VECTOR& inDirection);
-	bool IsCreatableCheck();
+	Bullet* Create(const VECTOR& inPosition, const VECTOR& inDirection);	// 弾の生成
+	bool IsCreatableCheck();												// 弾が生成可能か
 
 private:
 	//BulletCreater();
@@ -20,7 +20,7 @@ private:
 	void operator=(const BulletCreater&);
 
 	// ベクターへのポインタ
-	std::vector<Bullet*>* const activeBullet;
-	std::vector<Bullet*>* const deActiveBullet;
+	std::list<Bullet*>* const activeBullet;
+	std::list<Bullet*>* const deActiveBullet;
 };
 

@@ -203,6 +203,11 @@ const float Player::GetCollideRadius()
 	return collisionSphere.radius;
 }
 
+const float Player::GetHitPoint()
+{
+	return hitPoint;
+}
+
 /// <summary>
 /// ƒvƒŒƒCƒ„[‚Ìó‘Ô‚ğ•Ô‚·
 /// </summary>

@@ -12,13 +12,17 @@ using namespace My3dLib;
 
 class Timer;
 class Player;
+class Bullet;
+class BulletCreater;
 
 class Boss : public Mover
 {
 public:
-	Boss(Player* inPlayer);
+	Boss(Player* inPlayer,
+		 BulletCreater* const inBulletCreater);
 	~Boss();
 
+	// ボス自身のステータス
 	enum class State
 	{
 		NONE,		// 存在しない
@@ -27,12 +31,14 @@ public:
 		DEAD		// 死亡
 	};
 
+	// 攻撃状態
 	enum class AttackState
 	{
 		ASSAULT = 0,	// 突進攻撃
-		//BULLET,			// 通常弾発射
+		BULLET,			// 通常弾発射
 		//SLOW_BULLET,	// 遅延弾発射
 		JUMP,			// ジャンプ
+		TELEPORT,		// 瞬間移動
 		//KICK,			// キック
 		//JUDGE,			// どこにいるか判断
 		//BACK,			// 画面端に戻る
@@ -53,6 +59,7 @@ public:
 	void HitOtherCharacter(const VECTOR& forceDirection);	// 他のキャラクターに接触した
 	void HitShield(const VECTOR& forceDirection);			// シールドに接触した
 
+	const float GetHitPoint();			// 現在のHitPointを返す
 	const float GetCollideRadius();		// 当たり判定球半径を返す
 private:
 	static const VECTOR INITIAL_POSITION;		// 初期位置
@@ -66,9 +73,14 @@ private:
 	static const float  VIBRATE_TIME;			// 振動する時間
 	static const float  ASSAULT_SPEED;			// 突進速度
 	static const float  ASSAULT_DISTANCE;		// 突進する距離
+	static const float  TELEPORT_DISTANCE;		// 瞬間移動する距離（プレイヤーを中心とする半径）
+	static const float  SHOT_INTERVAL;			// 発射間隔（秒）
 	static const int    ASSAULT_TIME;			// 突進回数
+	static const int	SHOT_TIME;				// 発射回数
 
 	int	   assaultTime;					// 突進回数
+	int	   shotTime;					// 発射回数
+	float  hitPoint;					// 体力
 	float  vibrateTime;					// 振動時間
 	VECTOR startAssaultPosition;		// 突進開始位置
 	VECTOR force;						// 加わる力（跳ね返るときに主に使用）
@@ -76,6 +88,8 @@ private:
 
 	Player* player;						// Playerクラスのポインタ
 	Timer* timer;						// Timerクラスのポインタ
+	Bullet* bullet;						// Bulletクラスのポインタ
+	BulletCreater* bulletCreater;		// BulletCreaterクラスのポインタ
 
 	State state;						// 状態
 	AttackState attackState;			// 攻撃パターン
@@ -99,15 +113,22 @@ private:
 
 	// 各AttackStateごとの更新処理
 	void UpdateAssault();
+	void UpdateBullet();
 	void UpdateJump();
+	void UpdateTeleport();
 	void UpdateThinking();
 
-	void ChangeStateInitialize();		// 状態変化時の初期化
-	void ResetPositionYaw();			// Y座標を0.0fの位置に戻す
-	void FaceToPlayer();				// プレイヤーのほうを向く
-	void AssaultToPlayer();				// プレイヤーに向かって突進する
-	bool Jump();						// ジャンプする
-	bool Vibrate();						// 振動する
-	bool Slide();						// 防御されたときの反動
+
+	void ChangeStateInitialize();					// 状態変化時の初期化
+	void ChangeAttackState(AttackState nextState);	// 攻撃パターン変更
+	void ResetPositionYaw();						// Y座標を0.0fの位置に戻す
+	void FaceToPlayer();							// プレイヤーのほうを向く
+	void AssaultToPlayer();							// プレイヤーに向かって突進する
+	void ReloadBullet();							// 弾を補充する
+	void ShootBullet();								// 弾を発射する
+	bool Jump();									// ジャンプする
+	bool Vibrate();									// 振動する
+	bool Teleport();								// 瞬間移動する
+	bool Slide();									// 防御されたときの反動
 };
 

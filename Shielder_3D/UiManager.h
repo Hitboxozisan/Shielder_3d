@@ -14,13 +14,17 @@ public:
 	void Activate();						// 活性化処理
 	void Draw(GameMain::State state,
 			  VECTOR inPlayerPos,
-			  VECTOR inEnemyPos);			// 描画処理
+			  VECTOR inEnemyPos,
+			  float inPlayerHitPoint,
+			  float inEnemyHitPoint);		// 描画処理
 
 private:
 	UiManager(const UiManager&);
 	void operator=(const UiManager&);
 
 	void DrawRockOnCursor();
+	void DrawPlayerHitPoint(float inPlayerHitPoint);	// プレイヤーのHitPointを描画する
+	void DrawEnemyHitPoint(float inEnemyHitPoint);		// エネミーのHitPointを描画する
 	
 	static const std::string GRAPHIC_FOLDER_PATH;
 	static const std::string UI_GRAPHIC_PATH;
@@ -30,8 +34,11 @@ private:
 	// 画像種類
 	enum Image
 	{
-		ROCK_ON_CURSOR,
-		IMAGE_AMOUNT
+		ROCK_ON_CURSOR,		// ロックオンカーソル
+		HP_PLAYER,			// プレイヤーのHitPoint
+		HP_ENMEY,			// ボスのHitPoint
+		
+		IMAGE_AMOUNT		// 画像総数
 	};
 
 	/*struct EnemyTrunkPosition
