@@ -120,7 +120,7 @@ void Title::Draw()
 	}
 	
 	// デモ映像を再生する
-	DrawExtendGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, movieGraphHandle, FALSE);
+	//DrawExtendGraph(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, movieGraphHandle, FALSE);
 
 	//タイトル名描画
 	DrawExtendGraph(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, titleImageHandle, TRUE);

@@ -24,7 +24,7 @@ EffectTeleport::~EffectTeleport()
 void EffectTeleport::Initialize()
 {
 	// エフェクト読み込み
-	effectHandle = LoadEffekseerEffect("Data/Effect/teleport.efkefc", 15.0f);
+	effectHandle = LoadEffekseerEffect("Data/Effect/teleport.efkefc", 20.0f);
 	// エラー処理
 	if (effectHandle == -1)
 	{
@@ -52,7 +52,6 @@ void EffectTeleport::Activate(VECTOR inPosition)
 	position = inPosition;
 	//position = VGet(320.0f, 300.0f, 100.0f);
 	position.y = 50.0f;
-	position.z = 0.0f;
 	playingEffectHandle = -1;
 }
 

@@ -8,6 +8,7 @@ using namespace Math3d;
 /// コンストラクタ
 /// </summary>
 Character::Character()
+	:isAlive(true)
 {
 	// 処理なし
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+class Boss;
+
 /// <summary>
 /// カメラクラス
 /// </summary>
@@ -9,7 +11,7 @@ public:
 	Camera();
 	~Camera();
 
-	void Initialize();						// 初期化処理
+	void Initialize(Boss* inBoss);			// 初期化処理
 	void Finalize();						// 終了処理
 	void Activate(VECTOR inPlayerPos,
 				  VECTOR inEnemyPos);		// 活性化処理
@@ -34,6 +36,8 @@ private:
 	static const float ROCKON_POSSIBLE_DISTANCE;	// ロックオン可能距離
 	static const float ROCKON_DISTANCE;				// ロックオン中のカメラ距離
 	static const float ROCKON_VERTICAL_DISTANCE;	// ロックオン中のカメラ高
+
+	Boss* boss;						// Bossクラスのポインタ
 
 	// 変数
 	float targetDistance;			// ターゲット距離

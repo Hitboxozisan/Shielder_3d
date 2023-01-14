@@ -24,7 +24,7 @@ const float  Player::MAX_HIT_POINT	     = 100.0f;
 const float  Player::MAX_NORMAL_SPEED    = 500.0f;
 const float  Player::MAX_DEFENSE_SPEED   = 200.0f;
 const float  Player::COLLIDE_RADIUS	     = 100.0f;
-const float  Player::DECREMENT_HIT_POINT = 10.0f;
+const float  Player::DECREMENT_HIT_POINT = 35.0f;
 const float  Player::FORCE_AT_DAMAGE	 = 500.0f;
 const float  Player::FORCE_AT_DEFENSE    = 300.0f;
 const float  Player::FRICTIONAL_FORCE	 = -400.0f;
@@ -114,6 +114,23 @@ void Player::Deactivate()
 /// </summary>
 void Player::Update()
 {
+	// 体力が尽きたら死亡する
+	if (hitPoint <= 0.0f && state != State::DEAD)
+	{
+		//SoundManager::GetInstance().StopBgm();								// BGMを停止する
+		WaitTimer(1000);														// 一秒止める
+		effectManager->CreatePlayerDiedEffect(position);						// 死亡エフェクトを再生
+		//SoundManager::GetInstance().SetSePlayFlag(SoundManager::PLAYER_DIE);	// 爆発音を再生する
+		state = State::DEAD;													// 死んだ状態にする
+	}
+
+	// 死んでいるなら処理しない
+	if (state == State::DEAD)
+	{
+		isAlive = false;
+		return;
+	}
+
 	if (pUpdate != nullptr)
 	{
 		(this->*pUpdate)();		// 状態ごとの更新処理
@@ -121,6 +138,8 @@ void Player::Update()
 
 	// 当たり判定球移動処理
 	collisionSphere.Move(position);
+
+	
 }
 
 /// <summary>
@@ -139,8 +158,8 @@ void Player::Draw()
 
 #ifdef DEBUG
 	//当たり判定デバック描画
-	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
-		32, GetColor(0, 255, 0), 0, FALSE);
+	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		//32, GetColor(0, 255, 0), 0, FALSE);
 
 #endif // DEBUG
 }
@@ -207,6 +226,10 @@ const float Player::GetCollideRadius()
 	return collisionSphere.radius;
 }
 
+/// <summary>
+/// 現在のHitPointを返す
+/// </summary>
+/// <returns></returns>
 const float Player::GetHitPoint()
 {
 	return hitPoint;
@@ -478,7 +501,11 @@ void Player::DecrementHitPoint()
 	if (hitPoint <= 0)
 	{
 		hitPoint = 0.0f;
+		isAlive = false;		// 死んだ状態にする
+		return;
 	}
+
+	isAlive = true;
 }
 
 /// <summary>

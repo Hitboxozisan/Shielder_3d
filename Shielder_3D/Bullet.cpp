@@ -5,7 +5,7 @@
 #include "ModelManager.h"
 
 const VECTOR Bullet::INITIAL_SCALE			 = VGet(0.5f, 0.5f, 0.5f);
-const float  Bullet::NORMAL_SPEED		     = 500.0f;
+const float  Bullet::NORMAL_SPEED		     = 1000.0f;
 const float  Bullet::SLOW_SPEED				 = 200.0f;
 const float  Bullet::SCALE_BY_DIRECTION_FOR_CORRECTION = 1.0f;
 const float  Bullet::NORMAL_FORWARD_DISTANCE = 100.0f;
@@ -136,8 +136,8 @@ void Bullet::Draw()
 #ifdef DEBUG
 
 	// 当たり判定デバック描画
-	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
-		8, GetColor(0, 255, 0), 0, FALSE);
+	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		//8, GetColor(0, 255, 0), 0, FALSE);
 
 #endif // DEBUG	
 }
@@ -224,6 +224,7 @@ void Bullet::Move()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 	//フィールド外に出たら消滅させる
+
 
 	nextPosition = VAdd(nextPosition, VScale(direction, speed * deltaTime));	//向いている方向に移動
 	collisionSphere.Move(position);												//当たり判定球移動

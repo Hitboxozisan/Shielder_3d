@@ -3,6 +3,8 @@
 // ・
 // <note>
 // ・振動時ロックオンだとわかりにくいある程度の誤差は追わないようにするべきか？
+// ・ロックオン可能なのかをBossのStateを参照する影響でBossクラスのポインタを使用
+// 　Activate, Updateの引数が無駄になっているため修正する必要あり
 //----------------------------------------------------------------
 
 #include "Pch.h"
@@ -33,8 +35,8 @@ const float  Boss::IS_JUST_MAGNIFICATION = 2.0f;
 const float  Boss::FORCE_AT_HIT_SHIELD	 = 300.0f;
 const float  Boss::COLLIDE_RADIUS		 = 100.0f;
 const float  Boss::VIBRATE_TIME			 = 1.0f;
-const float  Boss::ASSAULT_SPEED		 = 1200.0f;
-const float  Boss::ASSAULT_DISTANCE		 = 2000.0f;
+const float  Boss::ASSAULT_SPEED		 = 1300.0f;
+const float  Boss::ASSAULT_DISTANCE		 = 1500.0f;
 const float  Boss::TELEPORT_DISTANCE	 = 800.0f;
 const float  Boss::TELEPORT_TIME		 = 3.0f;
 const float  Boss::SHOT_INTERVAL		 = 2.0f;
@@ -165,8 +167,8 @@ void Boss::Draw()
 #ifdef DEBUG
 
 	//当たり判定デバック描画
-	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
-		8, GetColor(0, 255, 0), 0, FALSE);
+	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		//8, GetColor(0, 255, 0), 0, FALSE);
 
 #endif // DEBUG
 }
@@ -230,6 +232,15 @@ void Boss::HitShield(const VECTOR& forceDirection, const bool isJust)
 	// 状態を SLIDE に
 	state = State::SLIDE;
 	pUpdate = &Boss::UpdateSlide;
+}
+
+/// <summary>
+/// 現在のステータスを返す
+/// </summary>
+/// <returns></returns>
+const Boss::State Boss::GetCurrentState()
+{
+	return state;
 }
 
 /// <summary>
@@ -442,11 +453,12 @@ void Boss::UpdateTeleport()
 	// State を NONE にし存在を消滅後一定時間経過後 State を NORMAL に戻す
 	if (timer->IsTimeout())
 	{
+		// プレイヤーから一定距離の位置に瞬間移動する
+		Teleport();
+
 		// テレポートエフェクトを生成する
 		effectManager->CreateTeleportEffect(position);
 
-		// プレイヤーから一定距離の位置に瞬間移動する
-		Teleport();
 		state = State::ATTACK;
 		ChangeAttackState(AttackState::THINKING);
 		//attackState = AttackState::THINKING;
@@ -505,7 +517,9 @@ void Boss::UpdateThinking()
 	SetNextAttackUpdate();
 
 #endif // DEBUG
+
 	
+
 }
 
 /// <summary>
@@ -702,6 +716,8 @@ bool Boss::Teleport()
 
 	// 位置を設定
 	nextPosition = newPosition;
+	// エフェクト発生位置関係上一旦直接代入する
+	position = newPosition;
 
 	return true;
 }

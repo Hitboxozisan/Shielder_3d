@@ -18,6 +18,7 @@
 #include "ModelManager.h"
 #include "UiManager.h"
 #include "HitChecker.h"
+#include "Random.h"
 
 const int	GameMain::PLAYER_AMOUNT     = 1;
 const int	GameMain::ENEMY_AMOUNT      = 1;
@@ -51,6 +52,8 @@ void GameMain::Initialize()
 {
 	// 画像読み込み
 	playGraphicHandle = LoadGraph(PLAY_GRAPHIC_PATH.c_str());
+	// 画像読み込み（ここはあとで別クラスで処理させるべきか）
+	resultImageHandle = LoadGraph("Data/Image/Result.png");
 
 	// エフェクト管理クラス
 	effectManager = new EffectManager();
@@ -59,9 +62,10 @@ void GameMain::Initialize()
 	// 弾生成クラス
 	bulletCreater = new BulletCreater(&activeBullet, &deactiveBullet);
 
- 	// カメラクラス
+	// カメラクラス
 	camera = new Camera();
-	camera->Initialize();
+	
+
 
 	// プレイヤークラス
 	player = new Player(camera);
@@ -71,6 +75,8 @@ void GameMain::Initialize()
 	boss = new Boss(player,
 					bulletCreater);
 	boss->Initialize(effectManager);
+
+	camera->Initialize(boss);
 
 	// バレットクラス
 	for (int i = 0; i < MAX_BULLET_AMOUNT; ++i)
@@ -113,6 +119,8 @@ void GameMain::Activate()
 	uiManager->Activate();							// Ui管理クラス活性化処理
 
 	frame = 0;
+	alpha = 0;
+
 	state = State::START;
 	pUpdate = &GameMain::UpdateStart;
 
@@ -179,7 +187,7 @@ void GameMain::Draw()
 	// 待機用弾描画
 	for (auto itr = deactiveBullet.begin(); itr != deactiveBullet.end(); ++itr)
 	{
-		(*itr)->Draw();
+		//(*itr)->Draw();
 	}
 
 	
@@ -190,6 +198,32 @@ void GameMain::Draw()
 					boss->GetPosition(),
 					player->GetHitPoint(),
 					boss->GetHitPoint());
+
+	// 画面をフェードアウト
+	if (state == State::GAME_OVER || state == State::RESULT || state == State::FINISH)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		DrawBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GetColor(0, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+
+	// リザルト画面の表示
+	if (state == State::RESULT)
+	{
+		// リザルト画像描画
+		DrawExtendGraph(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, resultImageHandle, TRUE);
+		pushEnterAlpha += alphaAdd;						// 徐々に透明にする
+		if (pushEnterAlpha == 0 || pushEnterAlpha == 255)
+		{
+			alphaAdd = -alphaAdd;
+		}
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, pushEnterAlpha);
+		DrawExtendGraph(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, pushEnterHandle, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, pushEnterAlpha);
+		DrawFormatStringToHandle(950, 400, GetColor(255, 255, 255), fontHandle, "%d", lifeScore);
+		DrawFormatStringToHandle(950, 560, GetColor(255, 255, 255), fontHandle, "%d", trunkScore);
+		DrawFormatStringToHandle(950, 870, GetColor(255, 255, 255), fontHandle, "%d", totalScore);
+	}
 }
 
 void GameMain::UpdateStart()
@@ -243,6 +277,12 @@ void GameMain::UpdateGame()
 	effectManager->Update(player->GetPosition(),
 						  boss->GetPosition());
 
+	// プレイヤーが死んだ場合はゲームオーバーに
+	if (!player->IsAlive())
+	{
+		state = State::GAME_OVER;
+		pUpdate = &GameMain::UpdateGameOver;
+	}
 }
 
 /// <summary>
@@ -250,7 +290,21 @@ void GameMain::UpdateGame()
 /// </summary>
 void GameMain::UpdateGameOver()
 {
-	
+	// 徐々に暗くしていく
+	alpha++;
+
+	// alpah値を増加させたら
+	if (alpha >= 200)
+	{
+		alpha = 200;			//これ以上増減しないようにする
+		state = State::RESULT;
+		frame = 0;
+		pUpdate = &GameMain::UpdateResult;
+		//parent->SetNextScene(SceneManager::RESULT);
+		//return;
+	}
+
+	effectManager->Update(player->GetPosition(), boss->GetPosition());
 }
 
 void GameMain::UpdateFinish()
@@ -263,5 +317,43 @@ void GameMain::UpdateFinish()
 /// </summary>
 void GameMain::UpdateResult()
 {
-	
+	float score = Random::GetInstance().GetRandomFloat(0, 9999999);
+
+	//一定フレーム経過するまで
+	//各スコアをランダムな数値を表示させる
+	//フレームで判断ではなくカウントで判断のほうが良いかも
+	if (frame <= 90)
+	{
+		lifeScore = score;
+		trunkScore = score;
+		totalScore = score;
+	}
+	else if (frame <= 120)
+	{
+		//SoundManager::GetInstance().SetSePlayFlag(SoundManager::DECIDE_SCORE);
+		lifeScore = player->GetHitPoint() * 15000;
+		trunkScore = score;
+		totalScore = score;
+	}
+	else if (frame <= 150)
+	{
+		//SoundManager::GetInstance().SetSePlayFlag(SoundManager::DECIDE_SCORE);
+		trunkScore = boss->GetHitPoint() * 20000;
+		totalScore = score;
+	}
+	else
+	{
+		//SoundManager::GetInstance().SetSePlayFlag(SoundManager::DECIDE_SCORE);
+		totalScore = lifeScore + trunkScore;
+	}
+
+
+	//スペースキーもしくは一定時間経過でタイトル画面に移行する
+	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_RETURN) ||
+		frame >= 600)
+	{
+		Deactivate();
+		//SoundManager::GetInstance().StopBgm();
+		parent->SetNextScene(SceneManager::TITLE);
+	}
 }

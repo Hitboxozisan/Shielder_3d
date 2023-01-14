@@ -128,9 +128,10 @@ void UiManager::DrawPlayerHitPoint(float inPlayerHitPoint)
 	// この辺りは後に修正
 	// 最大体力を100とする
 	float playerMaxHitPoint = 100.0f;
-	int PosLX = 55; int PosLY = 1000;
+	int PosLX = 55; int PosLY = 980;
 	int PosRX = PosLX + 490 * (inPlayerHitPoint / playerMaxHitPoint);
-	int PosRY = 1025;
+	int PosRY = 1015;
+
 	int uiPosX = 300; int uiPosY = 1000;
 
 	// プレイヤーのHitPointを表示
@@ -152,6 +153,7 @@ void UiManager::DrawEnemyHitPoint(float inEnemyHitPoint)
 	int PosRX = PosLX + 750 * (inEnemyHitPoint / enemyMaxHitPoint);
 	int PosRX2 = (PosLX - 10) + 750 * (-inEnemyHitPoint / enemyMaxHitPoint);
 	int PosRY = 110;
+
 	int uiPosX = 937; int uiPosY = 100;
 
 	int subGreen = inEnemyHitPoint;

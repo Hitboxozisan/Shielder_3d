@@ -30,9 +30,7 @@ void DamageEffect::Activate(VECTOR inPosition)
 	exist = true;
 	frame = 0;
 	position = inPosition;
-	//position = VGet(320.0f, 300.0f, 100.0f);
 	position.y = 50.0f;
-	position.z = 0.0f;
 	playingEffectHandle = -1;
 }
 

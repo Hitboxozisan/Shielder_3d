@@ -1,5 +1,6 @@
 #include "Pch.h"
 #include "Camera.h"
+#include "Boss.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
 
@@ -10,7 +11,7 @@ const float Camera::HORIZONTAL_DISTANCE		 = 200.0f;
 const float Camera::VERTICAL_DISTANCE		 = 500.0f;
 const float Camera::CAMERA_DISTANCE			 = 500.0f;
 const float Camera::DISPLACE_DISTANCE		 = 100.0f;
-const float Camera::ROCKON_POSSIBLE_DISTANCE = 2000.0f;
+const float Camera::ROCKON_POSSIBLE_DISTANCE = 1200.0f;
 const float Camera::ROCKON_DISTANCE			 = 400.0f;
 const float Camera::ROCKON_VERTICAL_DISTANCE = 400.0f;
 
@@ -33,8 +34,10 @@ Camera::~Camera()
 /// <summary>
 /// 初期化処理
 /// </summary>
-void Camera::Initialize()
+void Camera::Initialize(Boss* inBoss)
 {
+	boss = inBoss;
+
 	targetDistance = TARGET_DISTANCE;
 	horizontalDistance = HORIZONTAL_DISTANCE;
 	verticalDistance = VERTICAL_DISTANCE;
@@ -81,7 +84,6 @@ void Camera::Deactivate()
 /// <param name="inEnemyPos"></param>
 void Camera::Update(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
-	Effekseer_Sync3DSetting();						// DXライブラリのカメラとEffekseerのカメラを同期する
 	UpdatePosition(inPlayerPos, inEnemyPos);		// actor と enemy の現在地を更新
 	CalculatingCamerePos();							// カメラの位置を設定
 	//CalculatingTagetPos();						// 注視点の位置を設定
@@ -91,6 +93,7 @@ void Camera::Update(VECTOR inPlayerPos, VECTOR inEnemyPos)
 
 	// カメラの位置と向きを設定
 	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+	Effekseer_Sync3DSetting();						// DXライブラリのカメラとEffekseerのカメラを同期する
 }
 
 /// <summary>
@@ -225,7 +228,9 @@ bool Camera::isRockOnPossible()
 {
 	float range = VSize(enemyPosition - actorPosition);
 	// ロックオン可能距離内なら
-	if (ROCKON_POSSIBLE_DISTANCE >= range && isRockOn)
+	if (ROCKON_POSSIBLE_DISTANCE >= range && 
+		isRockOn &&
+		boss->GetCurrentState() != Boss::State::NONE)
 	{
 		return true;
 	}

@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Shield.h"
 #include "Boss.h"
+#include "Bullet.h"
 #include "SoundManager.h"
 
 using namespace Math3d;
@@ -37,6 +38,7 @@ void HitChecker::Check(Player* player,
 {
 	PlayerAndEnemy(player, boss);				// プレイヤーとエネミーの当たり判定
 	ShieldAndEnemy(player, shield, boss);		// シールドとエネミーの当たり判定
+	//BulletAndPlayer(player, boss, bullet);
 }
 
 /// <summary>
@@ -60,7 +62,8 @@ void HitChecker::PlayerAndEnemy(Player* player, Boss* boss)
 
 	// プレイヤーとエネミーの距離がお互いの当たり判定半径より小さい場合当たっている
 	if (distance <= radius &&
-		player->GetCurrentState() != Player::State::DAMAGE)
+		player->GetCurrentState() != Player::State::DAMAGE &&
+		boss->GetCurrentState() != Boss::State::NONE)
 	{
 		// 接触音を再生
 
@@ -94,7 +97,8 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 
 	// シールドとエネミーの距離がお互いの当たり判定半径より小さい場合当たっている
 	if (distance <= radius &&
-		shield->GetState() == Shield::State::DEPLOYMENT)
+		shield->GetState() == Shield::State::DEPLOYMENT && 
+		boss->GetCurrentState() != Boss::State::NONE)
 	{
 		// 防御音再生
 
@@ -104,6 +108,38 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 		boss->HitShield(enemyForceDirection, shield->isJust());
 	}
 }
+
+//void HitChecker::BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet)
+//{
+//	for (auto itr = bullet->begin(); itr != bullet->end(); ++itr)
+//	{
+//		if (bullet != nullptr)
+//		{
+//			VECTOR characterPos = player->GetPosition();
+//			characterPos.y = 0.0f;
+//
+//			VECTOR characterOtherPos = boss->GetPosition();
+//			characterOtherPos.y = 0.0f;
+//
+//			VECTOR sub = VSub(characterPos, characterOtherPos);
+//			//sub.y = 0.0f;
+//
+//			float length = VSize(sub);
+//
+//			if (HitCheck_Sphere_Sphere(player->GetPosition(), player->GetCollideRadius(),
+//				(*itr)->GetPosition(), (*itr)->GetCollisionRadius()) &&
+//				player->GetCurrentState() != Player::State::DAMAGE&& (*itr)->IsCollidableState())
+//			{
+//				SoundManager::GetInstance().SetSePlayFlag(SoundManager::BULLET_HIT);
+//				sub = VScale(sub, 1.0f);		//吹き飛ばす方向は逆方向
+//				VECTOR forceDirection = VNorm(sub);
+//				//boss->HitOtherCharacter(forceDirection, true);
+//				(*itr)->OnHitBreak();
+//				//WaitTimer(hitStopTime);			//ヒットストップ
+//			}
+//		}
+//	}
+//}
 
 
 

@@ -62,6 +62,7 @@ public:
 	void HitShield(const VECTOR& forceDirection,
 				   const bool isJust);						// シールドに接触した
 
+	const State GetCurrentState();		// 現在のステータスを返す
 	const float GetHitPoint();			// 現在のHitPointを返す
 	const float GetCollideRadius();		// 当たり判定球半径を返す
 private:

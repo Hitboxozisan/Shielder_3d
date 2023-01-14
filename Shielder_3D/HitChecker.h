@@ -10,6 +10,7 @@ class Character;
 class Player;
 class Shield;
 class Boss;
+class Bullt;
 
 class HitChecker final
 {
@@ -26,6 +27,7 @@ public:
 	void ShieldAndEnemy(Player* player,
 						Shield* shield,
 						Boss* boss);						// 盾とエネミーの当たり判定
+	//void BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet);	// 弾とプレイヤーの当たり判定
 
 private:
 	int hitStopTime;
