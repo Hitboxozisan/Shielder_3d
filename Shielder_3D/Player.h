@@ -25,7 +25,7 @@ public:
 		DEAD		// 死亡
 	};
 
-	void Initialize();		// 初期化処理
+	void Initialize(EffectManager* const inEffectManager);		// 初期化処理
 	void Finalize();		// 終了処理
 	void Activate();		// 活性化処理
 	void Deactivate();		// 非活性化処理
@@ -62,6 +62,7 @@ private:
 	
 	Shield* shield;								// Shieldクラスのポインタ
 	Camera* camera;								// Cameraクラスのポインタ
+	EffectManager* effectManager;				// EffectManagerクラスのポインタ
 	Timer* timer;								// Timerクラスのポインタ（なんとかできないものか）
 
 	State state;								// 状態
@@ -69,6 +70,7 @@ private:
 
 	VECTOR inputDirection;						// 入力方向
 
+	int frame;									// 経過フレーム（1秒以下の描画に使用）
 	float maxSpeed;								// 最大速度
 	VECTOR force;								// 
 

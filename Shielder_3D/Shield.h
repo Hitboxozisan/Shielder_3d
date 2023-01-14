@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ObjectBase.h"
+#include "EffectManager.h"
 
 using namespace My3dLib;
 
@@ -18,7 +19,7 @@ public:
 		DESTRUCTION		// 破壊
 	};
 
-	void Initialize();									// 初期化処理
+	void Initialize(EffectManager* inEffectManager);									// 初期化処理
 	void Finalize();									// 終了処理
 	void Activate(const VECTOR& inPosition,
 				  const VECTOR& inDirection,
@@ -31,9 +32,10 @@ public:
 	void DecrementHitPoint();								// 耐久値を減少させる
 
 	void SetShieldPosition(const VECTOR& inPosition,
-		const VECTOR& inDirection,
-		const VECTOR& inPrevDirection);						// シールドの位置を設定
+						   const VECTOR& inDirection,
+						   const VECTOR& inPrevDirection);	// シールドの位置を設定
 	const float GetCollideRadius();							// 当たり判定球半径を返す
+	const bool isJust();									// "ジャストガード"かどうか
 	State GetState() const { return state; }				// 現在の状態を返す
 	
 
@@ -44,8 +46,11 @@ private:
 	static const VECTOR INITIAL_SCALE;							// 初期サイズ
 	static const float  MAX_HITPOINT;							// 最大耐久値
 	static const float  SCALE_BY_DIRECTION_FOR_CORRECTION;		// プレイヤーとの距離
+	static const float  JUST_DEFENSE_TIME;						// "ジャストガード"と判断する時間
 	static const float  COLLIDE_RADIUS;							// 当たり判定球半径
 	static const float  COLLIDE_HEIGHT;							// 当たり判定球高さ
+
+	EffectManager* effectManager;	// EffectManagerクラスのポインタ
 
 	State state;
 	Sphere collisionSphere;			// 本来なら球体を使うべきではないが

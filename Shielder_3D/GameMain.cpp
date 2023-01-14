@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Character.h"
 #include "Camera.h"
+#include "EffectManager.h"
 #include "Bullet.h"
 #include "BulletCreater.h"
 #include "ModelManager.h"
@@ -23,6 +24,9 @@ const int	GameMain::ENEMY_AMOUNT      = 1;
 const int	GameMain::CHARACTER_AMOUNT  = PLAYER_AMOUNT + ENEMY_AMOUNT;
 const int   GameMain::MAX_METEOR_AMOUNT = 4;
 const float GameMain::MAX_BULLET_AMOUNT = 8;
+
+const std::string GameMain::PLAY_GRAPHIC_PATH = "Data/Image/playGraphicHandle.png";
+
 
 GameMain::GameMain(SceneManager* const sceneManager)
 	:SceneBase(sceneManager)
@@ -45,6 +49,13 @@ GameMain::~GameMain()
 /// </summary>
 void GameMain::Initialize()
 {
+	// 画像読み込み
+	playGraphicHandle = LoadGraph(PLAY_GRAPHIC_PATH.c_str());
+
+	// エフェクト管理クラス
+	effectManager = new EffectManager();
+	effectManager->Initialize();
+
 	// 弾生成クラス
 	bulletCreater = new BulletCreater(&activeBullet, &deactiveBullet);
 
@@ -54,12 +65,12 @@ void GameMain::Initialize()
 
 	// プレイヤークラス
 	player = new Player(camera);
-	player->Initialize();
+	player->Initialize(effectManager);
 
 	// ボスクラス
 	boss = new Boss(player,
 					bulletCreater);
-	boss->Initialize();
+	boss->Initialize(effectManager);
 
 	// バレットクラス
 	for (int i = 0; i < MAX_BULLET_AMOUNT; ++i)
@@ -93,12 +104,13 @@ void GameMain::Finalize()
 /// </summary>
 void GameMain::Activate()
 {
-	player->Activate();						// プレイヤークラス活性化処理
-	boss->Activate();						// ボスクラス活性化処理
+	player->Activate();								// プレイヤークラス活性化処理
+	boss->Activate();								// ボスクラス活性化処理
 	
 	camera->Activate(player->GetPosition(),
-					 boss->GetPosition());	// カメラクラス活性化処理
-	uiManager->Activate();					// Ui管理クラス活性化処理
+					 boss->GetPosition());			// カメラクラス活性化処理
+	//effectManager->Activate(player->GetPosition());	// エフェクト管理クラス活性化処理
+	uiManager->Activate();							// Ui管理クラス活性化処理
 
 	frame = 0;
 	state = State::START;
@@ -148,8 +160,15 @@ void GameMain::Update()
 /// </summary>
 void GameMain::Draw()
 {
+	// Effekseer描画のため適当な画像を描画する
+	DrawGraph(0.0f, 0.0f, playGraphicHandle, FALSE);
+
 	field->Draw();
+	// エフェクト描画
+	effectManager->Draw(player->GetPosition());
+	// プレイヤー描画
 	player->Draw();
+	// エネミー描画
 	boss->Draw();
 
 	// 攻撃用弾描画
@@ -162,6 +181,8 @@ void GameMain::Draw()
 	{
 		(*itr)->Draw();
 	}
+
+	
 
 	// Ui描画
 	uiManager->Draw(state, 
@@ -183,6 +204,7 @@ void GameMain::UpdateGame()
 	camera->Update(player->GetPosition(),
 				   boss->GetPosition());
 
+	// 弾の処理（ここはもうちょっと綺麗にしたい）
 	// アクティブな弾の更新処理
 	for (auto itr = activeBullet.begin(); itr != activeBullet.end();)
 	{
@@ -198,6 +220,17 @@ void GameMain::UpdateGame()
 			++itr;
 		}
 	}
+	// ディアクティブな弾の更新処理
+	for (auto itr = deactiveBullet.begin(); itr != deactiveBullet.end();)
+	{
+		
+		// 発射していない弾はエネミーの周囲を回転させる
+		(*itr)->RotationAboutObject(*itr,
+									boss->GetPosition(),
+									deactiveBullet.size());
+		++itr;
+		
+	}
 
 	// 当たり判定処理
 	// 盾の処理をどうにかしたい
@@ -205,6 +238,10 @@ void GameMain::UpdateGame()
 	hitChecker->Check(player,
 					  player->GetShieldPointer(),
 					  boss);
+
+	// エフェクト更新処理
+	effectManager->Update(player->GetPosition(),
+						  boss->GetPosition());
 
 }
 

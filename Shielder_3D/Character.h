@@ -2,18 +2,20 @@
 
 #include "Mover.h"
 
+class EffectManager;
+
 class Character : public Mover
 {
 public:
 	Character();
 	virtual ~Character();
 
-	virtual void Initialize() = 0;		// 初期化処理
-	virtual void Finalize() = 0;		// 終了処理
-	virtual void Activate() = 0;		// 活性化処理
-	virtual void Deactivate() = 0;		// 非活性化処理
-	virtual void Update() = 0;			// 更新処理
-	virtual void Draw() = 0;			// 描画処理
+	virtual void Initialize(EffectManager* const inEffectManager) = 0;		// 初期化処理
+	virtual void Finalize() = 0;											// 終了処理
+	virtual void Activate() = 0;											// 活性化処理
+	virtual void Deactivate() = 0;											// 非活性化処理
+	virtual void Update() = 0;												// 更新処理
+	virtual void Draw() = 0;												// 描画処理
 
 	void		 MoveFinish();				// 移動予定地に実際に移動
 	virtual void GameStart() = 0;			// ゲーム開始時（演出用）

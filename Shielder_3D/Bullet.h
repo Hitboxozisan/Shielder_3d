@@ -24,11 +24,11 @@ public:
 	bool Update();								// 更新処理
 	void Draw();								// 描画処理
 
-	void RotateToEnemy();						// エネミーを軸に回転させる
 	void Shoot();								// 発射処理
 
 	// エネミーの前に設置する
 	void SetToFrontOfEnemy(const VECTOR& inPosition, const VECTOR& inDirection);
+	void RotationAboutObject(Mover* bullet, VECTOR objPos,int totalBullet);	// オブジェクトを中心に回転
 
 	State GetState() const;						// 現在の状態を返す
 	bool IsCollidableState() const;				// 当たり判定がある状態か
@@ -44,6 +44,7 @@ private:
 	static const float  NORMAL_SPEED;						// 通常球移動速度
 	static const float  SLOW_SPEED;							// 遅延弾移動速度
 	static const float  SCALE_BY_DIRECTION_FOR_CORRECTION;	// 位置補正用に向きベクトルに掛ける倍率
+	static const float  NORMAL_FORWARD_DISTANCE;			// 滞空時のオブジェクトとの距離
 	static const float  COLLIDE_RADIUS;			   			// 当たり判定球半径
 
 	State state;		// 現在の状態
@@ -56,5 +57,6 @@ private:
 	void ResetDirection();		// モデルの向きを NORMAL 時に戻す
 	void Move();				// 移動処理
 	void MoveFinish();			// 移動予定地に実際に移動する
+	
 };
 

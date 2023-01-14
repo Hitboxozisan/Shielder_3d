@@ -11,6 +11,7 @@ class Boss;
 class Bullet;
 class BulletCreater;
 class Camera;
+class EffectManager;
 class Field;
 class UiManager;
 class HitChecker;
@@ -47,6 +48,8 @@ private:
 	static const int   CHARACTER_AMOUNT;
 	static const int   MAX_METEOR_AMOUNT;
 	static const float MAX_BULLET_AMOUNT;			// 弾の最大数
+
+	static const std::string PLAY_GRAPHIC_PATH;
 	
 	State state;
 
@@ -55,6 +58,7 @@ private:
 	Boss* boss;
 	BulletCreater* bulletCreater;
 	Camera* camera;
+	EffectManager* effectManager;
 	Field* field;
 	UiManager* uiManager;
 	HitChecker* hitChecker;
@@ -72,6 +76,7 @@ private:
 	void UpdateResult();
 	void (GameMain::* pUpdate)();
 
+	int playGraphicHandle;				// エフェクト描画用の画像
 	int fontHandle;						// フォント用ハンドル
 	int resultImageHandle;				// リザルト画面画像
 	int pushEnterHandle;				// リザルト画面画像

@@ -8,12 +8,14 @@
 
 #include "Pch.h"
 #include "Shield.h"
-
+#include "EffectManager.h"
+#include "DeltaTime.h"
 #include "ModelManager.h"
 
 const VECTOR Shield::INITIAL_SCALE					  = VGet(0.5f, 0.5f, 0.5f);
 const float Shield::MAX_HITPOINT					  = 100.0f;
 const float Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 150.0f;
+const float Shield::JUST_DEFENSE_TIME				  = 0.1f;
 const float Shield::COLLIDE_RADIUS					  = 50.0f;
 const float Shield::COLLIDE_HEIGHT					  = 125.0f;
 
@@ -36,8 +38,10 @@ Shield::~Shield()
 /// <summary>
 /// 初期化処理
 /// </summary>
-void Shield::Initialize()
+void Shield::Initialize(EffectManager* inEffectManager)
 {
+	effectManager = inEffectManager;
+
 	hitPoint = MAX_HITPOINT;
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::SHIELD));
@@ -84,6 +88,7 @@ void Shield::Activate(const VECTOR& inPosition,
 void Shield::Deactivate()
 {
 	state = State::NONE;
+	elapsedtTime = 0.0f;
 	pUpdate = nullptr;
 }
 
@@ -135,7 +140,16 @@ void Shield::Draw()
 /// <param name="forceDirection"></param>
 void Shield::HitOtherCharacter()
 {
+	// "ジャストガード"かどうかでエフェクトを変更する
+	if (isJust())
+	{
+		// ガードエフェクトを生成
+		effectManager->CreateSparkEffect(position);
+	}
+	else
+	{
 
+	}
 
 }
 
@@ -146,6 +160,21 @@ void Shield::HitOtherCharacter()
 const float Shield::GetCollideRadius()
 {
 	return collisionSphere.radius;
+}
+
+/// <summary>
+/// "ジャストガード"かどうか 
+/// </summary>
+/// <returns></returns>
+const bool Shield::isJust()
+{
+	// 設定時間より短ければ"ジャストガード"と判断する
+	if (elapsedtTime <= JUST_DEFENSE_TIME)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 /// <summary>
@@ -180,6 +209,7 @@ void Shield::MoveFinish()
 /// </summary>
 void Shield::UpdateDeployment()
 {
+	elapsedtTime += DeltaTime::GetInstance().GetDeltaTime();
 	MoveFinish();
 }
 

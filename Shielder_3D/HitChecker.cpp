@@ -10,11 +10,17 @@
 
 using namespace Math3d;
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 HitChecker::HitChecker()
 {
 	// 処理なし
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 HitChecker::~HitChecker()
 {
 	// 処理なし
@@ -84,6 +90,7 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 	
 	// プレイヤーはエネミーとは逆方向に
 	VECTOR playerForceDirection = VScale(enemyForceDirection, -1.0f);
+	playerForceDirection.y = 0.0f;
 
 	// シールドとエネミーの距離がお互いの当たり判定半径より小さい場合当たっている
 	if (distance <= radius &&
@@ -94,7 +101,7 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 		// 各オブジェクト対応
 		shield->HitOtherCharacter();
 		player->HitShieldOtherCharacter(playerForceDirection);
-		boss->HitShield(enemyForceDirection);
+		boss->HitShield(enemyForceDirection, shield->isJust());
 	}
 }
 

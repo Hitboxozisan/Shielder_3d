@@ -4,6 +4,9 @@
 #include "GameMain.h"
 #include "Title.h"
 
+/// <summary>
+/// コンストラクタ
+/// </summary>
 SceneManager::SceneManager()
 	:eachScenes()
 	,currentPointer(nullptr)
@@ -13,11 +16,17 @@ SceneManager::SceneManager()
 	// 処理なし
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 SceneManager::~SceneManager()
 {
 	// 処理なし
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void SceneManager::Initialize()
 {
 	eachScenes[TITLE] = new Title(this);

@@ -1,5 +1,6 @@
 #include "Pch.h"
 #include "Character.h"
+#include "EffectManager.h"
 
 using namespace Math3d;
 

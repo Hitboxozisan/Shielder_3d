@@ -4,11 +4,12 @@
 #include "DeltaTime.h"
 #include "ModelManager.h"
 
-const VECTOR Bullet::INITIAL_SCALE = VGet(0.5f, 0.5f, 0.5f);
-const float  Bullet::NORMAL_SPEED   = 500.0f;
-const float  Bullet::SLOW_SPEED     = 200.0f;
+const VECTOR Bullet::INITIAL_SCALE			 = VGet(0.5f, 0.5f, 0.5f);
+const float  Bullet::NORMAL_SPEED		     = 500.0f;
+const float  Bullet::SLOW_SPEED				 = 200.0f;
 const float  Bullet::SCALE_BY_DIRECTION_FOR_CORRECTION = 1.0f;
-const float  Bullet::COLLIDE_RADIUS = 50.0f;
+const float  Bullet::NORMAL_FORWARD_DISTANCE = 100.0f;
+const float  Bullet::COLLIDE_RADIUS			 = 50.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -67,7 +68,7 @@ void Bullet::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 	velocity = ZERO_VECTOR;
 	
 	speed = NORMAL_SPEED;
-	state = State::NORMAL;
+	state = State::SHOOT;
 
 	collisionSphere.localCenter = ZERO_VECTOR;
 	collisionSphere.radius = COLLIDE_RADIUS;
@@ -84,7 +85,7 @@ void Bullet::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 /// </summary>
 void Bullet::Deactivate()
 {
-	state = State::NONE;
+	state = State::NORMAL;
 }
 
 /// <summary>
@@ -103,7 +104,14 @@ bool Bullet::Update()
 	if (state == State::NORMAL ||
 		state == State::SHOOT)
 	{
-		Move();
+		if (state == State::NORMAL)
+		{
+			
+		}
+		else
+		{
+			Move();
+		}
 		MoveFinish();
 
 		return true;
@@ -132,14 +140,6 @@ void Bullet::Draw()
 		8, GetColor(0, 255, 0), 0, FALSE);
 
 #endif // DEBUG	
-}
-
-/// <summary>
-/// エネミーを軸に回転させる
-/// </summary>
-void Bullet::RotateToEnemy()
-{
-
 }
 
 /// <summary>
@@ -243,6 +243,18 @@ void Bullet::MoveFinish()
 
 	// モデルの向きを設定
 	MV1SetRotationYUseDir(modelHandle, direction, 0.0f);
+}
+
+/// <summary>
+/// オブジェクトを中心に回転
+/// </summary>
+void Bullet::RotationAboutObject(Mover* bullet, VECTOR objPos, int totalBullet)
+{
+	VECTOR objPosition = objPos;
+	
+	position.x = objPosition.x + NORMAL_FORWARD_DISTANCE * cosf(0.0f);
+	position.z = objPosition.z + NORMAL_FORWARD_DISTANCE * sinf(1.0f);
+
 }
 
 /// <summary>

@@ -81,6 +81,7 @@ void Camera::Deactivate()
 /// <param name="inEnemyPos"></param>
 void Camera::Update(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
+	Effekseer_Sync3DSetting();						// DXライブラリのカメラとEffekseerのカメラを同期する
 	UpdatePosition(inPlayerPos, inEnemyPos);		// actor と enemy の現在地を更新
 	CalculatingCamerePos();							// カメラの位置を設定
 	//CalculatingTagetPos();						// 注視点の位置を設定
@@ -243,6 +244,7 @@ bool Camera::isRockOnPossible()
 void Camera::InputAction()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
 	if (cameraYaw > 360.0f || cameraYaw < 0.0f)
 	{
 		//cameraYaw = 0.0f;

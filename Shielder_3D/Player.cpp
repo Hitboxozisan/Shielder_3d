@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Shield.h"
 #include "Camera.h"
+#include "EffectManager.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
@@ -49,8 +50,12 @@ Player::~Player()
 /// <summary>
 /// 初期化処理
 /// </summary>
-void Player::Initialize()
+void Player::Initialize(EffectManager* const inEffectManager)
 {
+	shield = new Shield();
+	shield->Initialize(inEffectManager);
+
+	effectManager = inEffectManager;
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::PLAYER));
 	// モデルの拡大率設定
@@ -80,6 +85,7 @@ void Player::Activate()
 	hitPoint = MAX_HIT_POINT;
 	speed = 0.0f;
 	maxSpeed = MAX_NORMAL_SPEED;
+	frame = 0;
 	noDrawFrame = false;
 	// 当たり判定球情報設定
 	collisionSphere.localCenter = ZERO_VECTOR;
@@ -93,9 +99,6 @@ void Player::Activate()
 
 	// モデルを初期位置に配置
 	MV1SetPosition(modelHandle, position);
-
-	shield = new Shield();
-	shield->Initialize();
 
 }
 
@@ -167,6 +170,7 @@ void Player::HitOtherCharacter(const VECTOR& forceDirection)
 	force = VScale(force, FORCE_AT_DAMAGE);
 
 	// ダメージエフェクトを生成する
+	effectManager->CreateDamageEffect(position);
 
 	// HitPointを減少させる
 	DecrementHitPoint();
@@ -187,7 +191,7 @@ void Player::HitShieldOtherCharacter(const VECTOR& forceDirection)
 	force = VScale(force, FORCE_AT_DEFENSE);
 
 	// ガードエフェクトを生成する
-
+	effectManager->CreateSparkEffect(position);
 
 	// 状態を DAMAGE に
 	state = State::PREVENT;
@@ -516,6 +520,8 @@ void Player::InvincibleUpdate()
 bool Player::DamageBouncePlayer()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	++frame;
+
 	// 摩擦力を設定
 	VECTOR frictionalForce = VNorm(force);
 	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
@@ -523,10 +529,18 @@ bool Player::DamageBouncePlayer()
 	nextPosition = VAdd(nextPosition, force * deltaTime);
 	force = VAdd(force, frictionalForce * deltaTime);
 
-	//printfDx("")
+	// 一定時間おきにエフェクト生成
+	if (frame % 10 == 0)
+	{
+		// スモークエフェクト生成
+		effectManager->CreateSmokeEffect(nextPosition);
+	}
+	
 	// 跳ね返す力が0に近くなったら終了する
 	if (VSize(force) <= 1.0f)
 	{
+		// 経過フレームをリセット
+		frame = 0;
 		// 状態を NORMAL に
 		state = State::NORMAL;
 		pUpdate = &Player::UpdateNomal;
@@ -542,18 +556,32 @@ bool Player::DamageBouncePlayer()
 bool Player::DefenseBouncePlayer()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	++frame;
+
 	// 摩擦力を設定
 	VECTOR frictionalForce = VNorm(force);
 	frictionalForce = VScale(frictionalForce, FRICTIONAL_FORCE);
 
+	// 移動
 	nextPosition = VAdd(nextPosition, force * deltaTime);
 	force = VAdd(force, frictionalForce * deltaTime);
 
+	// 一定時間おきにエフェクト生成
+	if (frame % 10 == 0)
+	{
+		// スモークエフェクト生成
+		effectManager->CreateSmokeEffect(nextPosition);
+	}
+
 	// 跳ね返す力が0に近くなったら終了する
-	if (VSize(force) <= 0.0f)
+	if (VSize(force) <= 1.0f)
 	{
 		// シールドを非活性化
 		shield->Deactivate();
+		// 経過フレームをリセット
+		frame = 0;
+		// 力を0に戻す
+
 
 		// 状態を NORMAL に
 		state = State::NORMAL;
