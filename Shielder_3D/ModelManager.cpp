@@ -8,6 +8,7 @@ const string ModelManager::ENEMY_PATH		 = "Enemy/Enemy.mv1";
 const string ModelManager::SHIELD_PATH		 = "Shield/Shield.mv1";
 const string ModelManager::BULLET_PATH		 = "Bullet/Bullet.mv1";
 const string ModelManager::METEOR_PATH		 = "Meteor/Meteor.mv1";
+const string ModelManager::SWORD_PATH		 = "Sword/Sword.mv1";
 
 /// <summary>
 /// コンストラクタ
@@ -61,6 +62,9 @@ void ModelManager::LoadAllModel()
 
 	fullPath = MODEL_FOLDER_PATH + METEOR_PATH;
 	modelHandle[METEOR] = MV1LoadModel(fullPath.c_str());
+
+	fullPath = MODEL_FOLDER_PATH + SWORD_PATH;
+	modelHandle[SWORD] = MV1LoadModel(fullPath.c_str());
 
 	// エラー処理
 	for (int i = 0; i < MODEL_AMOUNT; ++i)

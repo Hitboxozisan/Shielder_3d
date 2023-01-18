@@ -17,7 +17,7 @@ const float EffectManager::SMOKE_EFFECT_SIZE = 15.0f;
 //ベースクラスインスタンスの総量
 const int EffectManager::BILLBOARD_AMOUNT = SMOKE_EFFECT_AMOUNT + ENERGY_EFFECT_AMOUNT;
 
-const std::string EffectManager::SPARK_EFFECT_PATH			= "Data/Effect/Blow.efkefc";
+const std::string EffectManager::SPARK_EFFECT_PATH			= "Data/Effect/blow.efkefc";
 const std::string EffectManager::DAMAGE_EFFECT_PATH			= "Data/Effect/damage.efkefc";
 const std::string EffectManager::RIGOR_EFFECT_GRAPHIC_PATH  = "Data/Effect/smoke.png";
 const std::string EffectManager::ENERGY_EFFECT_GRAPHIC_PATH = "Data/Effect/energy.png";

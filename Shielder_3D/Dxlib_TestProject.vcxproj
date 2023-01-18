@@ -185,6 +185,7 @@
     <ClCompile Include="Shield.cpp" />
     <ClCompile Include="SmokeEffect.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Sword.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="UiHitPoint.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Shield.h" />
     <ClInclude Include="SmokeEffect.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Sword.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Title.h" />
     <ClInclude Include="UiHitPoint.h" />

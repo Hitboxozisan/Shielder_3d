@@ -164,6 +164,9 @@
     <ClCompile Include="EffectTeleport.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Sword.cpp">
+      <Filter>ソース ファイル\Mover</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
@@ -282,6 +285,9 @@
     </ClInclude>
     <ClInclude Include="EffectTeleport.h">
       <Filter>ソース ファイル\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Sword.h">
+      <Filter>ソース ファイル\Mover</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

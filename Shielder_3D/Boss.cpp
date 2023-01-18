@@ -229,6 +229,8 @@ void Boss::HitShield(const VECTOR& forceDirection, const bool isJust)
 	// チャージエフェクトを生成
 	//effectManager->CreateEnergyEffect(position);
 
+	// タイマーを nullptr にする
+	timer = nullptr;
 	// 状態を SLIDE に
 	state = State::SLIDE;
 	pUpdate = &Boss::UpdateSlide;
@@ -354,7 +356,7 @@ void Boss::UpdateSlide()
 			return;
 		}
 		// 行動思考・決定
-		ChangeAttackState(AttackState::THINKING);
+		ChangeAttackState(AttackState::TELEPORT);
 		
 	}
 }
@@ -450,7 +452,7 @@ void Boss::UpdateTeleport()
 	// タイマーを更新
 	timer->Update(deltaTime);
 
-	// State を NONE にし存在を消滅後一定時間経過後 State を NORMAL に戻す
+	// State を NONE にし存在を消滅後一定時間経過後 State を ATTACK に戻す
 	if (timer->IsTimeout())
 	{
 		// プレイヤーから一定距離の位置に瞬間移動する

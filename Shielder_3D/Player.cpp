@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Shield.h"
 #include "Camera.h"
+#include "Sword.h"
 #include "EffectManager.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
@@ -34,9 +35,11 @@ using namespace Math3d;		// VECTORの計算に使用
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Player::Player(Camera* const inCamera)
+Player::Player(Camera* const inCamera,
+			   Sword* const inSword)
 	:inputDirection(ZERO_VECTOR)
 	,camera(inCamera)
+	,sword(inSword)
 {
 }
 
@@ -430,6 +433,14 @@ void Player::InputAction()
 	{
 		// ジャンプ
 
+	}
+
+	// 攻撃
+	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_J))
+	{
+		printfDx("a");
+		// 攻撃する
+		sword->activateSword(position, direction);
 	}
 
 	// 防御

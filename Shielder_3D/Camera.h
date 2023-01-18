@@ -34,6 +34,7 @@ private:
 	static const float CAMERA_DISTANCE;				// カメラとプレイヤーの距離
 	static const float DISPLACE_DISTANCE;			// 中心からのずれの距離
 	static const float ROCKON_POSSIBLE_DISTANCE;	// ロックオン可能距離
+	static const float ERROR_ADMISSIBLE_DISTANCE;	// ロックオン中対象を追わない誤差距離
 	static const float ROCKON_DISTANCE;				// ロックオン中のカメラ距離
 	static const float ROCKON_VERTICAL_DISTANCE;	// ロックオン中のカメラ高
 

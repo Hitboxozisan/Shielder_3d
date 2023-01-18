@@ -19,6 +19,7 @@ public:
 		SHIELD,
 		BULLET,
 		METEOR,
+		SWORD,
 
 		MODEL_AMOUNT
 	};
@@ -42,6 +43,7 @@ private:
 	static const string SHIELD_PATH;
 	static const string BULLET_PATH;
 	static const string METEOR_PATH;
+	static const string SWORD_PATH;
 
 	int modelHandle[MODEL_AMOUNT];
 };

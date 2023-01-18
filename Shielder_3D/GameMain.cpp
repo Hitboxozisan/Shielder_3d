@@ -15,6 +15,7 @@
 #include "EffectManager.h"
 #include "Bullet.h"
 #include "BulletCreater.h"
+#include "Sword.h"
 #include "ModelManager.h"
 #include "UiManager.h"
 #include "HitChecker.h"
@@ -65,10 +66,12 @@ void GameMain::Initialize()
 	// カメラクラス
 	camera = new Camera();
 	
-
+	// ソードクラス
+	sword = new Sword();
+	sword->Initialize();
 
 	// プレイヤークラス
-	player = new Player(camera);
+	player = new Player(camera, sword);
 	player->Initialize(effectManager);
 
 	// ボスクラス
@@ -115,6 +118,9 @@ void GameMain::Activate()
 	
 	camera->Activate(player->GetPosition(),
 					 boss->GetPosition());			// カメラクラス活性化処理
+
+	sword->Activate(player->GetPosition(),
+					player->GetDirection());		// ソードクラス活性化処理
 	//effectManager->Activate(player->GetPosition());	// エフェクト管理クラス活性化処理
 	uiManager->Activate();							// Ui管理クラス活性化処理
 
@@ -174,11 +180,13 @@ void GameMain::Draw()
 	field->Draw();
 	// エフェクト描画
 	effectManager->Draw(player->GetPosition());
+	
 	// プレイヤー描画
 	player->Draw();
 	// エネミー描画
 	boss->Draw();
-
+	// ソード描画
+	sword->Draw();
 	// 攻撃用弾描画
 	for (auto itr = activeBullet.begin(); itr != activeBullet.end(); ++itr)
 	{
@@ -265,6 +273,8 @@ void GameMain::UpdateGame()
 		++itr;
 		
 	}
+
+	sword->Update();
 
 	// 当たり判定処理
 	// 盾の処理をどうにかしたい

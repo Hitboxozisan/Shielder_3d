@@ -90,6 +90,7 @@ void Title::Update()
 
 	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_SPACE))
 	{
+		// 1ƒtƒŒ[ƒ€‚Å‘‰Á‚·‚éalpha’l‚ğ‘‰Á‚³‚¹‚é
 		alphaAdd *= 10;
 		frame = 0;
 		state = START;

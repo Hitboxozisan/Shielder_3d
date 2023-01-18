@@ -7,11 +7,12 @@ using namespace My3dLib;
 class Shield;
 class Camera;
 class Timer;
+class Sword;
 
 class Player : public Character
 {
 public:
-	Player(Camera* const);
+	Player(Camera* const, Sword* const);
 	~Player();
 
 	// 状態
@@ -62,6 +63,7 @@ private:
 	
 	Shield* shield;								// Shieldクラスのポインタ
 	Camera* camera;								// Cameraクラスのポインタ
+	Sword* sword;								// Swordクラスのポインタ
 	EffectManager* effectManager;				// EffectManagerクラスのポインタ
 	Timer* timer;								// Timerクラスのポインタ（なんとかできないものか）
 

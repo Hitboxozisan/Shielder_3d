@@ -10,6 +10,7 @@ class Player;
 class Boss;
 class Bullet;
 class BulletCreater;
+class Sword;
 class Camera;
 class EffectManager;
 class Field;
@@ -33,9 +34,9 @@ public:
 	{
 		START,			// 開始時
 		GAME,			// ゲーム中
-		GAME_OVER,		// 
-		FINISH,
-		RESULT
+		GAME_OVER,		// ゲームオーバー
+		FINISH,			// 終了
+		RESULT			// 結果画面
 	};
 
 private:
@@ -57,6 +58,7 @@ private:
 	Player *player;
 	Boss* boss;
 	BulletCreater* bulletCreater;
+	Sword* sword;
 	Camera* camera;
 	EffectManager* effectManager;
 	Field* field;

@@ -6,14 +6,15 @@
 
 using namespace Math3d;
 
-const float Camera::TARGET_DISTANCE			 = 500.0f;
-const float Camera::HORIZONTAL_DISTANCE		 = 200.0f;
-const float Camera::VERTICAL_DISTANCE		 = 500.0f;
-const float Camera::CAMERA_DISTANCE			 = 500.0f;
-const float Camera::DISPLACE_DISTANCE		 = 100.0f;
-const float Camera::ROCKON_POSSIBLE_DISTANCE = 1200.0f;
-const float Camera::ROCKON_DISTANCE			 = 400.0f;
-const float Camera::ROCKON_VERTICAL_DISTANCE = 400.0f;
+const float Camera::TARGET_DISTANCE			  = 500.0f;
+const float Camera::HORIZONTAL_DISTANCE		  = 200.0f;
+const float Camera::VERTICAL_DISTANCE		  = 500.0f;
+const float Camera::CAMERA_DISTANCE			  = 500.0f;
+const float Camera::DISPLACE_DISTANCE		  = 100.0f;
+const float Camera::ROCKON_POSSIBLE_DISTANCE  = 1200.0f;
+const float Camera::ERROR_ADMISSIBLE_DISTANCE = 5.0f;
+const float Camera::ROCKON_DISTANCE			  = 400.0f;
+const float Camera::ROCKON_VERTICAL_DISTANCE  = 400.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -150,7 +151,11 @@ bool Camera::IsRockOn()
 void Camera::UpdatePosition(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
 	actorPosition = inPlayerPos;
-	enemyPosition = inEnemyPos;
+	// ある程度の誤差は追わないようにする
+	if (VSize(inEnemyPos - enemyPosition) >= ERROR_ADMISSIBLE_DISTANCE)
+	{
+		enemyPosition = inEnemyPos;
+	}
 }
 
 /// <summary>
