@@ -224,7 +224,7 @@ void Boss::HitShield(const VECTOR& forceDirection, const bool isJust)
 
 	// HitPointを減少させる
 	// "ジャストガード"かどうかで減少倍率を攻撃パターンとは別に変更
-	DecrementHitPoint(isJust);
+	IncrementTrunkPoint(isJust);
 
 	// チャージエフェクトを生成
 	//effectManager->CreateEnergyEffect(position);
@@ -252,6 +252,11 @@ const Boss::State Boss::GetCurrentState()
 const float Boss::GetHitPoint()
 {
 	return hitPoint;
+}
+
+const float Boss::GetTrunkPoint()
+{
+	return trunkPoint;
 }
 
 /// <summary>
@@ -528,6 +533,15 @@ void Boss::UpdateThinking()
 /// HitPointを減少させる
 /// </summary>
 void Boss::DecrementHitPoint(bool isJust)
+{
+	
+}
+
+/// <summary>
+/// TrunkPointを増価させる
+/// </summary>
+/// <param name="isJust"></param>
+void Boss::IncrementTrunkPoint(bool isJust)
 {
 	// 数値的には増加させているが、Playerと合わせるためにあえて減少と表現
 	// HitPointを減少させる

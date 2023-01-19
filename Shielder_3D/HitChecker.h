@@ -27,6 +27,8 @@ public:
 	void ShieldAndEnemy(Player* player,
 						Shield* shield,
 						Boss* boss);						// 盾とエネミーの当たり判定
+	void ShieldAndSword();									// 盾と剣の当たり判定
+	void SwordAndCharacter();								// 剣とキャラクターの当たり判定
 	//void BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet);	// 弾とプレイヤーの当たり判定
 
 private:

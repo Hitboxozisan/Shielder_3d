@@ -64,6 +64,7 @@ public:
 
 	const State GetCurrentState();		// 現在のステータスを返す
 	const float GetHitPoint();			// 現在のHitPointを返す
+	const float GetTrunkPoint();		// 現在のTrunkPointを返す
 	const float GetCollideRadius();		// 当たり判定球半径を返す
 private:
 	static const VECTOR INITIAL_POSITION;			// 初期位置
@@ -73,6 +74,7 @@ private:
 	static const float  FRICTIONAL_FORCE;			// 摩擦力
 	static const float  GRAVITY;					// 重力
 	static const float  DECREMENT_HIT_POINT;		// 接触時のHitPoint減少量
+	static const float  DECREMENT_TRUNK_POINT;		// 接触時のTrunkPoint減少量
 	static const float  ASSAULT_MAGNIFICATION;		// ASSAULT時の減少倍率
 	static const float  BULLET_MAGNIFICATION;		// BULLET時の減少倍率
 	static const float  IS_JUST_MAGNIFICATION;		// "ジャストガード"時の減少倍率
@@ -90,6 +92,7 @@ private:
 	int	   assaultTime;					// 突進回数
 	int	   shotTime;					// 発射回数
 	float  hitPoint;					// 体力
+	float  trunkPoint;					// 体幹量
 	float  vibrateTime;					// 振動時間
 	float  trunkMagnification;			// 防がれたときの体幹ゲージの減る倍率
 	VECTOR startAssaultPosition;		// 突進開始位置
@@ -132,6 +135,7 @@ private:
 
 
 	void DecrementHitPoint(bool isJust);			// HitPointを減少させる
+	void IncrementTrunkPoint(bool isJust);			// 
 	void ChangeStateInitialize();					// 状態変化時の初期化
 	void ChangeAttackState(AttackState nextState);	// 攻撃パターン変更
 	void ResetPositionYaw();						// Y座標を0.0fの位置に戻す

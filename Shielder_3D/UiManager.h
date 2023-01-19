@@ -37,6 +37,7 @@ private:
 		ROCK_ON_CURSOR,		// ロックオンカーソル
 		HP_PLAYER,			// プレイヤーのHitPoint
 		HP_ENMEY,			// ボスのHitPoint
+		TRUNK_ENEMY,		// ボスのTrunkPoint
 		
 		IMAGE_AMOUNT		// 画像総数
 	};

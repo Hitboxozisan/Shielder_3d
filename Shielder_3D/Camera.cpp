@@ -151,6 +151,7 @@ bool Camera::IsRockOn()
 void Camera::UpdatePosition(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
 	actorPosition = inPlayerPos;
+	//actorPosition.y = 50.0f;
 	// ‚ ‚é’ö“x‚ÌŒë·‚Í’Ç‚í‚È‚¢‚æ‚¤‚É‚·‚é
 	if (VSize(inEnemyPos - enemyPosition) >= ERROR_ADMISSIBLE_DISTANCE)
 	{

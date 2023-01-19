@@ -6,8 +6,8 @@
 
 const VECTOR Sword::INITIAL_POSITION				 = VGet(0.0f, 0.0f, 0.0f);
 const VECTOR Sword::INITIAL_DIRECTION				 = VGet(1.0f, 0.0f, 0.0f);
-const VECTOR Sword::INITIAL_SCALE					 = VGet(1.0f, 1.0f, 1.0f);
-const float Sword::SCALE_BY_DIRECTION_FOR_CORRECTION = 50.0f;
+const VECTOR Sword::INITIAL_SCALE					 = VGet(0.8f, 0.8f, 0.8f);
+const float Sword::SCALE_BY_DIRECTION_FOR_CORRECTION = 100.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -71,6 +71,7 @@ void Sword::Activate(const VECTOR& inPosition, const VECTOR& inDirection)
 /// </summary>
 void Sword::Deactivate()
 {
+	state = State::NONE;
 }
 
 /// <summary>
@@ -129,11 +130,11 @@ void Sword::rollSword()
 /// <param name="inDirection">オブジェクトの向き</param>
 void Sword::SetToFrontOfObject(const VECTOR& inPosition, const VECTOR& inDirection)
 {
-	position = inPosition;
-	direction = inDirection;
+	nextPosition = inPosition;
+	nextDirection = inDirection;
 
 	//エネミーの前方に位置調整
-	VECTOR distanceToPlayer = VScale(direction, SCALE_BY_DIRECTION_FOR_CORRECTION);
+	VECTOR distanceToPlayer = VScale(inDirection, SCALE_BY_DIRECTION_FOR_CORRECTION);
 
 	nextPosition = VAdd(nextPosition, distanceToPlayer);
 }
@@ -149,4 +150,6 @@ void Sword::MoveFinish()
 
 	// モデルの向きを設定
 	MV1SetRotationYUseDir(modelHandle, direction, 0.0f);
+	
+	//MV1SetRotationXYZ(modelHandle, VGet(0.0f, 0.0f, direction.z * DX_PI));
 }

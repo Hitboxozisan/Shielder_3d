@@ -344,11 +344,17 @@ void Player::Move()
 		{
 			speed += SPEED_INCREASE;
 		}
+		
 
 		nextDirection = inputDirection;
 	}
 	else
 	{
+		if (camera->IsRockOn())
+		{
+			nextDirection = prevDirection;
+			//speed = 0.0f;
+		}
 		// ˆÚ“®‘¬“x‚ð™X‚ÉŒ¸­‚³‚¹‚é
 		if (speed > 0.0f)
 		{
@@ -370,8 +376,6 @@ void Player::Move()
 		front = VNorm(front);
 		nextDirection = front;
 	}
-
-	
 }
 
 /// <summary>
@@ -436,9 +440,8 @@ void Player::InputAction()
 	}
 
 	// UŒ‚
-	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_J))
+	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_F))
 	{
-		printfDx("a");
 		// UŒ‚‚·‚é
 		sword->activateSword(position, direction);
 	}

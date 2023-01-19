@@ -109,6 +109,23 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 	}
 }
 
+/// <summary>
+/// 剣と盾の当たり判定
+/// </summary>
+void HitChecker::ShieldAndSword()
+{
+
+	// 各オブジェクト対応
+
+}
+
+/// <summary>
+/// 剣とキャラクターの当たり判定
+/// </summary>
+void HitChecker::SwordAndCharacter()
+{
+}
+
 //void HitChecker::BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet)
 //{
 //	for (auto itr = bullet->begin(); itr != bullet->end(); ++itr)
