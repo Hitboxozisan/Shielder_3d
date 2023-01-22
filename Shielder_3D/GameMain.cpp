@@ -120,7 +120,7 @@ void GameMain::Activate()
 					 boss->GetPosition());			// カメラクラス活性化処理
 
 	
-	//effectManager->Activate(player->GetPosition());	// エフェクト管理クラス活性化処理
+	effectManager->CreateBackgroundEffect(ZERO_VECTOR);	// 背景エフェクトを生成
 	uiManager->Activate();								// Ui管理クラス活性化処理
 
 	frame = 0;

@@ -7,6 +7,7 @@
 #include "PlayerDiedEffect.h"
 #include "SmokeEffect.h"
 #include "ChargeEnergyEffect.h"
+#include "EffectFieldBackground.h"
 #include "EffectTeleport.h"
 
 const int EffectManager::SMOKE_EFFECT_AMOUNT  = 16;
@@ -50,6 +51,9 @@ void EffectManager::Initialize()
 
 	effects[3] = new EffectTeleport();
 	effects[3]->Initialize();
+
+	effects[4] = new EffectFieldBackground();
+	effects[4]->Initialize();
 
 	//effects[3] = new RecoveryEffect();
 	//effects[3]->Initialize();
@@ -114,6 +118,11 @@ void EffectManager::Deactivate()
 	}
 }
 
+/// <summary>
+/// 更新処理
+/// </summary>
+/// <param name="inPostion"></param>
+/// <param name="inEnemyPosition"></param>
 void EffectManager::Update(VECTOR inPostion, VECTOR inEnemyPosition)
 {
 	for (int i = 0; i < EFFECT_AMOUNT; ++i)
@@ -127,6 +136,10 @@ void EffectManager::Update(VECTOR inPostion, VECTOR inEnemyPosition)
 	}
 }
 
+/// <summary>
+/// 描画処理
+/// </summary>
+/// <param name="inPosition"></param>
 void EffectManager::Draw(const VECTOR& inPosition)
 {
 	int itr = 0;
@@ -248,6 +261,19 @@ void EffectManager::CreateTeleportEffect(const VECTOR& inPosition)
 	if (effects[ENEMY_TELEPORT]->GetExist() == false)
 	{
 		effects[ENEMY_TELEPORT]->Activate(inPosition);
+		return;
+	}
+}
+
+/// <summary>
+/// 背景エフェクトを生成
+/// </summary>
+/// <param name="inPosition"></param>
+void EffectManager::CreateBackgroundEffect(const VECTOR& inPosition)
+{
+	if (effects[FIELD_BACKGROUND]->GetExist() == false)
+	{
+		effects[FIELD_BACKGROUND]->Activate(inPosition);
 		return;
 	}
 }

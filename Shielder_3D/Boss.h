@@ -40,6 +40,7 @@ public:
 		BULLET,			// 通常弾発射
 		//SLOW_BULLET,	// 遅延弾発射
 		JUMP,			// ジャンプ
+		//TRAMPLE,		// 踏みつけ
 		TELEPORT,		// 瞬間移動
 		//KICK,			// キック
 		//JUDGE,			// どこにいるか判断

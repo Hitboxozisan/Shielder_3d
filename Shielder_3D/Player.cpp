@@ -370,19 +370,18 @@ void Player::Move()
 		}
 	}
 
-	// フィールド外に出そうなら移動しない
-	if (nextPosition.x <=  1450.0f &&
-		nextPosition.x >= -1450.0f &&
-		nextPosition.z <=  1450.0f &&
-		nextPosition.z >= -1450.0f)
+	// フィールド外に出ないようにする
+	if (IsOutField())
 	{
 		nextPosition = VAdd(position, VScale(moveForce, speed) * deltaTime);
 	}
 	else
 	{
-		// 画面がガク付くのでどうにかしないと
+		speed = 0.0f;
 		nextPosition = prevPosition;
 	}
+	
+	// プレイヤーのスクリーン座標が正しく出ないため今は手動で値を設定
 	nextDirection = VNorm(mousePosition - VGet(960.0f, 0.0f, -540.0f));
 
 	// ロックオン中の場合は向きを固定する

@@ -101,5 +101,4 @@ private:
 	void InvincibleUpdate();					// 無敵状態処理
 	bool DamageBouncePlayer();					// プレイヤーを跳ね返す（ダメージ）
 	bool DefenseBouncePlayer();					// プレイヤーを跳ね返す（ディフェンス）
-
 };

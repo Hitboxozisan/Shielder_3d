@@ -13,6 +13,11 @@ const int  COLOR_BIT_DEPTH = 32;					// カラービット数
 const int SCREEN_LEFTMOST = 1150;					// 画面左端座標
 const int SCREEN_RIGHTMOST = 2850;					// 画面右端座標
 
+const float FIELD_POSITION_NORTH = 1450.0f;		    // ステージ北端
+const float FIELD_POSITION_SOUTH = -1450.0f;	    // ステージ南端
+const float FIELD_POSITION_EAST = 1450.0f;		    // ステージ西端
+const float FIELD_POSITION_WEST = -1450.0f;		    // ステージ東端
+
 // 画面中心座標
 const int SCREEN_CENTER = ((SCREEN_RIGHTMOST - SCREEN_LEFTMOST) / 2) + SCREEN_LEFTMOST;
 // ステージ中心座標

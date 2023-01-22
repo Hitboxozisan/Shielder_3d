@@ -78,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		sceneManager->Draw();									// 各シーンに応じた描画処理
 #ifdef DEBUG
-		writeLineToField.WriteLine();							// フィールドにラインを描画
+		//writeLineToField.WriteLine();							// フィールドにラインを描画
 #endif // DEBUG
 		ScreenFlip();
 	}

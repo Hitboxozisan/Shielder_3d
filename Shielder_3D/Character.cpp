@@ -50,3 +50,21 @@ bool Character::IsAlive()
 {
 	return isAlive;
 }
+
+/// <summary>
+/// フィールド外に出そうか
+/// </summary>
+/// <returns>出そう</returns>
+bool Character::IsOutField()
+{
+
+	if (nextPosition.x <= FIELD_POSITION_NORTH &&
+		nextPosition.x >= FIELD_POSITION_SOUTH &&
+		nextPosition.z <= FIELD_POSITION_EAST  &&
+		nextPosition.z >= FIELD_POSITION_WEST)
+	{
+		return true;
+	}
+
+	return false;
+}

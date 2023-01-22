@@ -11,6 +11,11 @@ extern const int SCREEN_RIGHTMOST;		// 画面右端座標
                                            
 extern const int SCREEN_CENTER;		    // 画面中心座標
 extern const int POSITION_CENTER;       // ステージ中心座標
+
+extern const float FIELD_POSITION_NORTH;    // ステージ北端
+extern const float FIELD_POSITION_SOUTH;    // ステージ南端
+extern const float FIELD_POSITION_EAST;     // ステージ西端
+extern const float FIELD_POSITION_WEST;     // ステージ東端
                                            
 extern const VECTOR ZERO_VECTOR;		// ゼロベクトル
 

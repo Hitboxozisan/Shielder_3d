@@ -13,6 +13,7 @@ public:
 		DAMAGE,				// ダメージ
 		PLAYER_DEAD,		// 死亡
 		ENEMY_TELEPORT,		// 瞬間移動
+		FIELD_BACKGROUND,	// 背景エフェクト
 		//RECOVERY,			// 回復
 		//PLAYER_LASER,		// プレイヤー勝利エフェクト
 
@@ -37,6 +38,7 @@ public:
 	void CreateRecoveryEffect(const VECTOR& inPosition);	// プレイヤー回復エフェクトを生成する
 	void CreatePlayerLaser(const VECTOR& inPosition);		// プレイヤー勝利エフェクトを生成する
 	void CreateTeleportEffect(const VECTOR& inPosition);	// テレポートエフェクトを生成する
+	void CreateBackgroundEffect(const VECTOR& inPosition);	// 背景エフェクトを生成する
 
 	bool GetEnergyEffectState();							// 粒子エフェクトの状態を取得する
 

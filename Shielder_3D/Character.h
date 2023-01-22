@@ -31,8 +31,9 @@ protected:
 	bool  noDrawFrame;				// 描画可能フレームか
 	bool  isAlive;					// 生きているか
 
+	bool IsOutField();				// フィールド外に出そうか
 private:
 
-
+	
 };
 
