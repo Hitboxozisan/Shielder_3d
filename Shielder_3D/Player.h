@@ -7,12 +7,11 @@ using namespace My3dLib;
 class Shield;
 class Camera;
 class Timer;
-class Sword;
 
 class Player : public Character
 {
 public:
-	Player(Camera* const, Sword* const);
+	Player(Camera* const);
 	~Player();
 
 	// 状態
@@ -63,17 +62,21 @@ private:
 	
 	Shield* shield;								// Shieldクラスのポインタ
 	Camera* camera;								// Cameraクラスのポインタ
-	Sword* sword;								// Swordクラスのポインタ
 	EffectManager* effectManager;				// EffectManagerクラスのポインタ
 	Timer* timer;								// Timerクラスのポインタ（なんとかできないものか）
 
-	State state;								// 状態
+	State  state;								// 状態
 	Sphere collisionSphere;						// 当たり判定球
 
-	VECTOR inputDirection;						// 入力方向
 
-	int frame;									// 経過フレーム（1秒以下の描画に使用）
-	float maxSpeed;								// 最大速度
+	int    frame;								// 経過フレーム（1秒以下の描画に使用）
+	float  maxSpeed;							// 最大速度
+	int mousePosX;
+	int mousePosY;
+	VECTOR mousePosition;						// マウスポインタの位置
+	VECTOR screenPosition;						// プレイヤーの画面座標
+	VECTOR inputDirection;						// 入力方向
+	VECTOR moveForce;							// 進もうとする力
 	VECTOR force;								// 
 
 	void (Player::* pUpdate)();					// Update関数ポインタ

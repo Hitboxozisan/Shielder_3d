@@ -35,13 +35,18 @@ const float  Boss::IS_JUST_MAGNIFICATION = 2.0f;
 const float  Boss::FORCE_AT_HIT_SHIELD	 = 300.0f;
 const float  Boss::COLLIDE_RADIUS		 = 100.0f;
 const float  Boss::VIBRATE_TIME			 = 1.0f;
-const float  Boss::ASSAULT_SPEED		 = 1300.0f;
+const float  Boss::ASSAULT_SPEED		 = 2000.0f;
 const float  Boss::ASSAULT_DISTANCE		 = 1500.0f;
 const float  Boss::TELEPORT_DISTANCE	 = 800.0f;
 const float  Boss::TELEPORT_TIME		 = 3.0f;
 const float  Boss::SHOT_INTERVAL		 = 2.0f;
 const int    Boss::ASSAULT_TIME			 = 3;
 const int	 Boss::SHOT_TIME			 = 3;
+
+const VECTOR Boss::POP_POSITION_0 = VGet( 1300.0f, 0.0f,  1300.0f);
+const VECTOR Boss::POP_POSITION_1 = VGet(-1300.0f, 0.0f,  1300.0f);
+const VECTOR Boss::POP_POSITION_2 = VGet( 1300.0f, 0.0f, -1300.0f);
+const VECTOR Boss::POP_POSITION_3 = VGet(-1300.0f, 0.0f, -1300.0f);
 
 const float Boss::NEAR_DISTANCE			 = 250.0f;
 const float Boss::FAR_DISTANCE			 = 3000.0f;
@@ -70,6 +75,15 @@ Boss::~Boss()
 /// </summary>
 void Boss::Initialize(EffectManager* const inEffectManager)
 {
+	// 湧き位置を設定
+	popPosition =
+	{
+		POP_POSITION_0,
+		POP_POSITION_1,
+		POP_POSITION_2,
+		POP_POSITION_3
+	};
+
 	effectManager = inEffectManager;
 	// モデルの読み込み
 	modelHandle = ModelManager::GetInstance().GetModelHandle(ModelManager::ENEMY);
@@ -109,6 +123,7 @@ void Boss::Activate()
 	startAssaultPosition = ZERO_VECTOR;
 	force = ZERO_VECTOR;
 	jumpForce = ZERO_VECTOR;
+	prevPopPosition = 0;
 
 	// 初期状態を NORMAL に（後に別途行動切り替え）
 	state = State::ATTACK;
@@ -257,6 +272,11 @@ const float Boss::GetHitPoint()
 const float Boss::GetTrunkPoint()
 {
 	return trunkPoint;
+}
+
+const float Boss::GetMagnification()
+{
+	return trunkMagnification;
 }
 
 /// <summary>
@@ -719,22 +739,34 @@ bool Boss::Vibrate()
 /// <returns></returns>
 bool Boss::Teleport()
 {
-	// プレイヤーから半径（一定距離）の場所に瞬間移動する
-	VECTOR origin = player->GetPosition();
-	VECTOR newPosition = origin;
-	float angle = Random::GetInstance().GetRandomFloat(0.0f, 2.0f);
+	int random;
 
-	// 出現位置を算出
-	newPosition.x = origin.x + TELEPORT_DISTANCE * cosf(angle * DX_PI);
-	newPosition.z = origin.z + TELEPORT_DISTANCE * sinf(angle * DX_PI);
-	// 念のためY座標をリセットする
-	newPosition.y = 0.0f;
+	//// プレイヤーから半径（一定距離）の場所に瞬間移動する
+	//VECTOR origin = player->GetPosition();
+	//VECTOR newPosition = origin;
+	//float angle = Random::GetInstance().GetRandomFloat(0.0f, 2.0f);
 
-	// 位置を設定
-	nextPosition = newPosition;
-	// エフェクト発生位置関係上一旦直接代入する
-	position = newPosition;
+	//// 出現位置を算出
+	//newPosition.x = origin.x + TELEPORT_DISTANCE * cosf(angle * DX_PI);
+	//newPosition.z = origin.z + TELEPORT_DISTANCE * sinf(angle * DX_PI);
+	//// 念のためY座標をリセットする
+	//newPosition.y = 0.0f;
 
+	//// 位置を設定
+	//nextPosition = newPosition;
+	//// エフェクト発生位置関係上一旦直接代入する
+	//position = newPosition;
+	
+	// 前回と違う位置に湧くようにする
+	do
+	{
+		random = Random::GetInstance().GetRandomInt(0, 3);
+
+		nextPosition = popPosition[random];
+		position = popPosition[random];
+
+	} while (random == prevPopPosition);
+	
 	return true;
 }
 

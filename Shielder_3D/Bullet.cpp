@@ -136,8 +136,8 @@ void Bullet::Draw()
 #ifdef DEBUG
 
 	// 当たり判定デバック描画
-	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
-		//8, GetColor(0, 255, 0), 0, FALSE);
+	DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
+		8, GetColor(0, 255, 0), 0, FALSE);
 
 #endif // DEBUG	
 }

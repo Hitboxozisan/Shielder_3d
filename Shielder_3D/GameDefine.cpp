@@ -22,7 +22,7 @@ const VECTOR ZERO_VECTOR = { 0.0f, 0.0f, 0.0f };	// ゼロベクトル
 
 const VECTOR PROGRESS  = {  0.0f,  0.0f,  1.0f };		// 前
 const VECTOR RECESSION = {  0.0f,  0.0f, -1.0f };		// 後
-const VECTOR UP		   = {  0.0f,  1.0f,  0.0f };		// 上
-const VECTOR DOWN	   = {  0.0f, -1.0f,  0.0f };		// 下
+const VECTOR UP		   = {  0.0f,  0.0f,  1.0f };		// 上
+const VECTOR DOWN	   = {  0.0f,  0.0f, -1.0f };		// 下
 const VECTOR RIGHT     = {  1.0f,  0.0f,  0.0f };		// 右
 const VECTOR LEFT	   = { -1.0f,  0.0f,  0.0f };		// 左

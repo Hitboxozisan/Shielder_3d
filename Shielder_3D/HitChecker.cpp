@@ -34,11 +34,12 @@ HitChecker::~HitChecker()
 /// <param name="boss"></param>
 void HitChecker::Check(Player* player,
 					   Shield* shield,
-					   Boss* boss)
+					   Boss* boss,
+					   std::list<Bullet*>* bullet)
 {
 	PlayerAndEnemy(player, boss);				// プレイヤーとエネミーの当たり判定
 	ShieldAndEnemy(player, shield, boss);		// シールドとエネミーの当たり判定
-	//BulletAndPlayer(player, boss, bullet);
+	BulletAndPlayer(player, boss, bullet);
 }
 
 /// <summary>
@@ -103,7 +104,7 @@ void HitChecker::ShieldAndEnemy(Player* player, Shield* shield, Boss* boss)
 		// 防御音再生
 
 		// 各オブジェクト対応
-		shield->HitOtherCharacter();
+		shield->HitOtherCharacter(boss->GetMagnification());
 		player->HitShieldOtherCharacter(playerForceDirection);
 		boss->HitShield(enemyForceDirection, shield->isJust());
 	}
@@ -126,37 +127,37 @@ void HitChecker::SwordAndCharacter()
 {
 }
 
-//void HitChecker::BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet)
-//{
-//	for (auto itr = bullet->begin(); itr != bullet->end(); ++itr)
-//	{
-//		if (bullet != nullptr)
-//		{
-//			VECTOR characterPos = player->GetPosition();
-//			characterPos.y = 0.0f;
-//
-//			VECTOR characterOtherPos = boss->GetPosition();
-//			characterOtherPos.y = 0.0f;
-//
-//			VECTOR sub = VSub(characterPos, characterOtherPos);
-//			//sub.y = 0.0f;
-//
-//			float length = VSize(sub);
-//
-//			if (HitCheck_Sphere_Sphere(player->GetPosition(), player->GetCollideRadius(),
-//				(*itr)->GetPosition(), (*itr)->GetCollisionRadius()) &&
-//				player->GetCurrentState() != Player::State::DAMAGE&& (*itr)->IsCollidableState())
-//			{
-//				SoundManager::GetInstance().SetSePlayFlag(SoundManager::BULLET_HIT);
-//				sub = VScale(sub, 1.0f);		//吹き飛ばす方向は逆方向
-//				VECTOR forceDirection = VNorm(sub);
-//				//boss->HitOtherCharacter(forceDirection, true);
-//				(*itr)->OnHitBreak();
-//				//WaitTimer(hitStopTime);			//ヒットストップ
-//			}
-//		}
-//	}
-//}
+void HitChecker::BulletAndPlayer(Player* player, Boss* boss, std::list<Bullet*>* bullet)
+{
+	for (auto itr = bullet->begin(); itr != bullet->end(); ++itr)
+	{
+		if (bullet != nullptr)
+		{
+			VECTOR characterPos = player->GetPosition();
+			characterPos.y = 0.0f;
+
+			VECTOR characterOtherPos = boss->GetPosition();
+			characterOtherPos.y = 0.0f;
+
+			VECTOR sub = VSub(characterPos, characterOtherPos);
+			//sub.y = 0.0f;
+
+			float length = VSize(sub);
+
+			if (HitCheck_Sphere_Sphere(player->GetPosition(), player->GetCollideRadius(),
+				(*itr)->GetPosition(), (*itr)->GetCollisionRadius()) &&
+				player->GetCurrentState() != Player::State::DAMAGE&& (*itr)->IsCollidableState())
+			{
+				SoundManager::GetInstance().SetSePlayFlag(SoundManager::BULLET_HIT);
+				sub = VScale(sub, 1.0f);		//吹き飛ばす方向は逆方向
+				VECTOR forceDirection = VNorm(sub);
+				//boss->HitOtherCharacter(forceDirection, true);
+				(*itr)->OnHitBreak();
+				//WaitTimer(hitStopTime);			//ヒットストップ
+			}
+		}
+	}
+}
 
 
 

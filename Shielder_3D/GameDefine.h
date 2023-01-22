@@ -5,7 +5,7 @@ extern const bool IS_WINDOW_MODE;		// ウィンドウモードか
 extern const int  SCREEN_WIDTH;			// ウィンドウの幅
 extern const int  SCREEN_HEIGHT;		// ウィンドウの高さ
 extern const int  COLOR_BIT_DEPTH;      // カラービット数
-                                           
+                        
 extern const int SCREEN_LEFTMOST;		// 画面左端座標
 extern const int SCREEN_RIGHTMOST;		// 画面右端座標
                                            
@@ -21,7 +21,8 @@ extern const VECTOR DOWN;               // 下降
 extern const VECTOR RIGHT;              // 右移動
 extern const VECTOR LEFT;               // 左移動
 
-
+// フィールド端
+//1450.0f, 1450.0f;
 
 template <typename T>
 inline void SafeDelete(T*& p)   // ポインタの参照渡し

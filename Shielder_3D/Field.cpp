@@ -14,7 +14,7 @@ Field::~Field()
 void Field::Initialize()
 {
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::FIELD));
-	MV1SetScale(modelHandle, VGet(1.5f, 1.0f, 2.0f));														//モデルのサイズ変更
+	MV1SetScale(modelHandle, VGet(1.5f, 1.0f, 1.5f));														//モデルのサイズ変更
 
 	position = VGet(0.0f, -50.0f, 0.0f);
 	MV1SetPosition(modelHandle, position);
@@ -24,5 +24,4 @@ void Field::Initialize()
 void Field::Draw()
 {
 	MV1DrawModel(modelHandle);
-
 }

@@ -45,6 +45,9 @@
     <Filter Include="ソース ファイル\Effect">
       <UniqueIdentifier>{65c81e85-bea8-4227-bdf8-20fe2d8f2fee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Enemy">
+      <UniqueIdentifier>{b059d4f9-4263-44c0-8592-f0ac8e58f940}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="DebugMenu.cpp">
       <Filter>ソース ファイル\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Boss.cpp">
-      <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
     <ClCompile Include="Field.cpp">
       <Filter>ソース ファイル\ObjectBase</Filter>
@@ -164,8 +164,14 @@
     <ClCompile Include="EffectTeleport.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="Sword.cpp">
-      <Filter>ソース ファイル\Mover</Filter>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>ソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>ソース ファイル\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>ソース ファイル\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +222,6 @@
     </ClInclude>
     <ClInclude Include="DebugMenu.h">
       <Filter>ソース ファイル\Debug</Filter>
-    </ClInclude>
-    <ClInclude Include="Boss.h">
-      <Filter>ソース ファイル\Character</Filter>
     </ClInclude>
     <ClInclude Include="Field.h">
       <Filter>ソース ファイル\ObjectBase</Filter>
@@ -286,8 +289,14 @@
     <ClInclude Include="EffectTeleport.h">
       <Filter>ソース ファイル\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Sword.h">
-      <Filter>ソース ファイル\Mover</Filter>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>ソース ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>ソース ファイル\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>ソース ファイル\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

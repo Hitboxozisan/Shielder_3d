@@ -9,21 +9,20 @@
 #include "Player.h"
 #include "Shield.h"
 #include "Camera.h"
-#include "Sword.h"
 #include "EffectManager.h"
 #include "DeltaTime.h"
 #include "KeyManager.h"
 #include "ModelManager.h"
 #include "Timer.h"
 
-const VECTOR Player::INITIAL_POSITION    = VGet(500.0f, 0.0f, 100.0f);
+const VECTOR Player::INITIAL_POSITION    = VGet(100.0f, 0.0f, 0.0f);
 const VECTOR Player::INITIAL_DIRECTION   = VGet(0.0f, 0.0f, 1.0f);
 const VECTOR Player::INITIAL_SCALE       = VGet(0.5f, 0.5f, 0.5f);
 const float  Player::SPEED_INCREASE      = 5.0f;
 const float  Player::SPEED_DECREASE      = 10.0f;
 const float  Player::MAX_HIT_POINT	     = 100.0f;
-const float  Player::MAX_NORMAL_SPEED    = 500.0f;
-const float  Player::MAX_DEFENSE_SPEED   = 200.0f;
+const float  Player::MAX_NORMAL_SPEED    = 1000.0f;
+const float  Player::MAX_DEFENSE_SPEED   = 500.0f;
 const float  Player::COLLIDE_RADIUS	     = 100.0f;
 const float  Player::DECREMENT_HIT_POINT = 35.0f;
 const float  Player::FORCE_AT_DAMAGE	 = 500.0f;
@@ -35,11 +34,9 @@ using namespace Math3d;		// VECTORの計算に使用
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Player::Player(Camera* const inCamera,
-			   Sword* const inSword)
+Player::Player(Camera* const inCamera)
 	:inputDirection(ZERO_VECTOR)
 	,camera(inCamera)
-	,sword(inSword)
 {
 }
 
@@ -55,9 +52,11 @@ Player::~Player()
 /// </summary>
 void Player::Initialize(EffectManager* const inEffectManager)
 {
-	shield = new Shield();
-	shield->Initialize(inEffectManager);
-
+	for (int i = 0; i < 1; ++i)
+	{
+		shield = new Shield();
+		shield->Initialize(inEffectManager);
+	}
 	effectManager = inEffectManager;
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::PLAYER));
@@ -88,13 +87,14 @@ void Player::Activate()
 	hitPoint = MAX_HIT_POINT;
 	speed = 0.0f;
 	maxSpeed = MAX_NORMAL_SPEED;
+	mousePosition = ZERO_VECTOR;
+	moveForce = ZERO_VECTOR;
 	frame = 0;
 	noDrawFrame = false;
 	// 当たり判定球情報設定
 	collisionSphere.localCenter = ZERO_VECTOR;
 	collisionSphere.worldCenter = position;
 	collisionSphere.radius = COLLIDE_RADIUS;
-
 
 	// 状態を NORMAL に
 	state = State::NORMAL;
@@ -157,8 +157,11 @@ void Player::Draw()
 	}
 
 	MV1DrawModel(modelHandle);
-	shield->Draw();
-
+	
+	for (int i = 0; i < 1; ++i)
+	{
+		shield->Draw();
+	}
 #ifdef DEBUG
 	//当たり判定デバック描画
 	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
@@ -334,6 +337,8 @@ void Player::Move()
 {
 	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
 
+	screenPosition = ConvWorldPosToScreenPos(screenPosition);
+
 	// 入力があると移動する
 	if (VSize(inputDirection) != 0.0f)
 	{
@@ -345,8 +350,7 @@ void Player::Move()
 			speed += SPEED_INCREASE;
 		}
 		
-
-		nextDirection = inputDirection;
+		moveForce = inputDirection;
 	}
 	else
 	{
@@ -366,7 +370,20 @@ void Player::Move()
 		}
 	}
 
-	nextPosition = VAdd(position, VScale(nextDirection, speed) * deltaTime);
+	// フィールド外に出そうなら移動しない
+	if (nextPosition.x <=  1450.0f &&
+		nextPosition.x >= -1450.0f &&
+		nextPosition.z <=  1450.0f &&
+		nextPosition.z >= -1450.0f)
+	{
+		nextPosition = VAdd(position, VScale(moveForce, speed) * deltaTime);
+	}
+	else
+	{
+		// 画面がガク付くのでどうにかしないと
+		nextPosition = prevPosition;
+	}
+	nextDirection = VNorm(mousePosition - VGet(960.0f, 0.0f, -540.0f));
 
 	// ロックオン中の場合は向きを固定する
 	if (camera->IsRockOn())
@@ -399,6 +416,11 @@ void Player::InputAction()
 	VECTOR left = VCross(front, yAxis);
 
 	inputDirection = ZERO_VECTOR;
+	// マウスカーソル位置を取得
+	GetMousePoint(&mousePosX, &mousePosY);
+	mousePosition.x = mousePosX;
+	mousePosition.y = 0.0f;
+	mousePosition.z = -mousePosY;
 
 #ifdef DEBUG
 	// Pキーで死亡
@@ -409,41 +431,36 @@ void Player::InputAction()
 
 #endif // DEBUG
 
+	
+
 	// 前後左右移動
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_W))
 	{
-		inputDirection += front;
+		inputDirection += UP;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_S))
 	{
-		inputDirection += VScale(front, -1.0f);
+		inputDirection += DOWN;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_A))
 	{
-		inputDirection += left;
+		inputDirection += LEFT;
 	}
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_D))
 	{
-		inputDirection += VScale(left, -1.0f);
+		inputDirection += RIGHT;
 	}
 
 	// ロックオン切り替え
 	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_R))
 	{
-		camera->ChangeCamera();
+		//camera->ChangeCamera();
 	}
 
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_SPACE))
 	{
 		// ジャンプ
 
-	}
-
-	// 攻撃
-	if (KeyManager::GetInstance().CheckJustPressed(KEY_INPUT_F))
-	{
-		// 攻撃する
-		sword->activateSword(position, direction);
 	}
 
 	// 防御

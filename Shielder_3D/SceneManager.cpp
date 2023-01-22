@@ -41,7 +41,7 @@ void SceneManager::Initialize()
 	//–{—ˆ‚ÍTITLE
 	currentScene = nextScene = TITLE;
 #ifdef DEBUG
-	currentScene = nextScene = GAME_MAIN;
+	currentScene = nextScene = TITLE;
 #endif
 
 	currentPointer = eachScenes[currentScene];

@@ -6,10 +6,18 @@
 
 using namespace Math3d;
 
+const VECTOR Camera::INITIAL_POSITION = VGet(-800.0f, 3000.0f, 0.0f);
 const float Camera::TARGET_DISTANCE			  = 500.0f;
 const float Camera::HORIZONTAL_DISTANCE		  = 200.0f;
 const float Camera::VERTICAL_DISTANCE		  = 500.0f;
-const float Camera::CAMERA_DISTANCE			  = 500.0f;
+
+const float Camera::INITIAL_CAMERA_YAW		  = 1.5f;
+const float Camera::INITIAL_CAMERA_PITCH	  = 0.1f;
+const float Camera::START_CAMERA_YAW		  = 0.25f;
+const float Camera::START_CAMERA_DISTANCE	  = 300.0f;
+const float Camera::START_ADD_DISTANCE		  = 500.0f;
+
+const float Camera::CAMERA_DISTANCE			  = 1500.0f;
 const float Camera::DISPLACE_DISTANCE		  = 100.0f;
 const float Camera::ROCKON_POSSIBLE_DISTANCE  = 1200.0f;
 const float Camera::ERROR_ADMISSIBLE_DISTANCE = 5.0f;
@@ -43,8 +51,8 @@ void Camera::Initialize(Boss* inBoss)
 	horizontalDistance = HORIZONTAL_DISTANCE;
 	verticalDistance = VERTICAL_DISTANCE;
 	cameraRadius = CAMERA_DISTANCE;
-	cameraYaw = 0.0f;
-	cameraPitch = 1.0f;
+	cameraYaw = INITIAL_CAMERA_YAW;
+	cameraPitch = INITIAL_CAMERA_PITCH;
 	rockOnDistance = ROCKON_DISTANCE;
 
 	isRockOn = false;
@@ -67,8 +75,21 @@ void Camera::Finalize()
 /// <param name="inEnemyPos"></param>
 void Camera::Activate(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
-	position = inPlayerPos;
+	cameraRadius = START_CAMERA_DISTANCE;
+	position = INITIAL_POSITION;
 	actorPosition = inPlayerPos;
+
+	cameraYaw = INITIAL_CAMERA_YAW;
+	cameraPitch = INITIAL_CAMERA_PITCH;
+
+#ifdef DEBUG
+	cameraRadius = CAMERA_DISTANCE;
+	cameraYaw = 1.5f;
+	cameraPitch = -1.5f;
+#endif // DEBUG
+
+
+	isMoveInitialPosition = false;
 }
 
 /// <summary>
@@ -85,6 +106,12 @@ void Camera::Deactivate()
 /// <param name="inEnemyPos"></param>
 void Camera::Update(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
+	// 演出が終わるまで更新処理に入らない
+	/*if (!UpdateGameStart(inPlayerPos))
+	{
+		return;
+	}*/
+
 	UpdatePosition(inPlayerPos, inEnemyPos);		// actor と enemy の現在地を更新
 	CalculatingCamerePos();							// カメラの位置を設定
 	//CalculatingTagetPos();						// 注視点の位置を設定
@@ -93,7 +120,9 @@ void Camera::Update(VECTOR inPlayerPos, VECTOR inEnemyPos)
 	InputAction();									// 入力処理
 
 	// カメラの位置と向きを設定
-	SetCameraPositionAndTarget_UpVecY(position, targetPosition);
+	SetCameraPositionAndTarget_UpVecY(position, actorPosition);
+	//SetCameraPositionAndTargetAndUpVec(position, actorPosition, VGet(0.0f, 1.0f, 0.0f));
+
 	Effekseer_Sync3DSetting();						// DXライブラリのカメラとEffekseerのカメラを同期する
 }
 
@@ -144,14 +173,82 @@ bool Camera::IsRockOn()
 	return false;
 }
 
+/// <summary>
+/// 初期位置にカメラが移動したか
+/// </summary>
+/// <returns></returns>
+const bool Camera::IsMovedCameraToInitialPosition()
+{
+	return isMoveInitialPosition;
+}
+
+/// <summary>
+/// ゲーム開始時の演出用更新処理
+/// </summary>
+/// <param name="inPlayerPos">プレイヤーの位置</param>
+bool Camera::UpdateGameStart(VECTOR inPlayerPos)
+{
+	// プレイヤーの周囲を一回転する
+	if (RotateCamera())
+	{
+		// カメラの位置をゲーム中の位置に変更する
+		if(MoveCameraToInitialPosition())
+		{
+			isMoveInitialPosition = true;
+			return true;
+		}
+	}
+	// actor と enemyの現在位置の更新（これはいらないと思う）
+	UpdatePosition(inPlayerPos, ZERO_VECTOR);
+	// カメラの位置を更新
+	CalculatingCamerePos();
+
+	TargetRockon();
+	
+	// カメラの位置と向きを設定
+	SetCameraPositionAndTarget_UpVecY(position, actorPosition);
+	// DXライブラリのカメラとEffekseerのカメラを同期する
+	Effekseer_Sync3DSetting();						
+	return false;
+}
+
+/// <summary>
+/// カメラを初期位置に移動する
+/// </summary>
+bool Camera::MoveCameraToInitialPosition()
+{
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	
+	// 初期位置に移動したら終了する
+	if (cameraRadius >= CAMERA_DISTANCE &&
+		cameraPitch >= 0.3f)
+	{
+		
+		return true;
+	}
+	else
+	{
+		cameraRadius += START_ADD_DISTANCE * deltaTime;
+		// 初期角度になったらやめる
+		if (cameraPitch <= 0.3f)
+		{
+			cameraPitch += 0.1f * deltaTime;
+		}
+	}
+
+	return false;
+}
 
 /// <summary>
 /// actor と enemy の現在位置の更新
 /// </summary>
 void Camera::UpdatePosition(VECTOR inPlayerPos, VECTOR inEnemyPos)
 {
-	actorPosition = inPlayerPos;
-	//actorPosition.y = 50.0f;
+	// 前フレームの位置と違った場合更新する
+	if (actorPosition != inPlayerPos)
+	{
+		actorPosition = inPlayerPos;
+	}
 	// ある程度の誤差は追わないようにする
 	if (VSize(inEnemyPos - enemyPosition) >= ERROR_ADMISSIBLE_DISTANCE)
 	{
@@ -181,12 +278,9 @@ void Camera::CalculatingCamerePos()
 	// ロックオンしていない場合はプレイヤーを追従する
 	else
 	{
-		position.x = targetPosition.x + cameraRadius * cosf(cameraYaw);
-		//position.y = 50.0f;
-		position.z = targetPosition.z + cameraRadius * sinf(cameraYaw);
-		//position.x = position.x * cosf(cameraPitch);
-		position.y = cameraRadius * sinf(cameraPitch);
-		//position.z = position.z * cosf(cameraPitch);
+		position.x = targetPosition.x + cameraRadius * cosf(cameraYaw * DX_PI);
+		position.z = targetPosition.z + cameraRadius * sinf(cameraYaw * DX_PI);
+		position.y = cameraRadius * sinf(cameraPitch * DX_PI);
 	}
 	
 
@@ -207,9 +301,19 @@ void Camera::CalculatingTagetPos()
 /// <summary>
 /// カメラを回転させる
 /// </summary>
-void Camera::RotateCamera()
+bool Camera::RotateCamera()
 {
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+
+	// カメラがプレイヤーの周囲を一回転したら
+	if (cameraYaw >= 3.5f)
+	{
+		return true;
+	}
+
+	cameraYaw += START_CAMERA_YAW * deltaTime * DX_PI;
 	
+	return false;
 }
 
 // ロックオン対象を見る
@@ -264,21 +368,21 @@ void Camera::InputAction()
 	// カメラを時計回りに回転させる
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_Q))
 	{
-		cameraYaw += 1.5f * deltaTime;
+		cameraYaw += 1.5f * deltaTime * DX_PI;
 	}
 	// カメラを反時計回りに回転させる
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_E))
 	{
-		cameraYaw -= 1.5f * deltaTime;
+		cameraYaw -= 1.5f * deltaTime * DX_PI;
 	}
 	// カメラ位置を高くする
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_I))
 	{
-		cameraPitch += 0.5f * deltaTime;
+		cameraPitch += 0.5f * deltaTime * DX_PI;
 	}
 	// カメラ位置を低くする
 	if (KeyManager::GetInstance().CheckPressed(KEY_INPUT_K))
 	{
-		cameraPitch -= 0.5f * deltaTime;
+		cameraPitch -= 0.5f * deltaTime * DX_PI;
 	}
 }

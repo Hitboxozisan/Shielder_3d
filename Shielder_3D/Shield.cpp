@@ -8,16 +8,19 @@
 
 #include "Pch.h"
 #include "Shield.h"
+#include "Timer.h"
 #include "EffectManager.h"
 #include "DeltaTime.h"
 #include "ModelManager.h"
 
-const VECTOR Shield::INITIAL_SCALE					  = VGet(0.5f, 0.5f, 0.5f);
-const float Shield::MAX_HITPOINT					  = 100.0f;
-const float Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 150.0f;
-const float Shield::JUST_DEFENSE_TIME				  = 0.1f;
-const float Shield::COLLIDE_RADIUS					  = 50.0f;
-const float Shield::COLLIDE_HEIGHT					  = 125.0f;
+const VECTOR Shield::INITIAL_SCALE					   = VGet(0.5f, 0.5f, 0.5f);
+const float  Shield::MAX_TRUNK_POINT				   = 100.0f;
+const float  Shield::SCALE_BY_DIRECTION_FOR_CORRECTION = 150.0f;
+const float  Shield::JUST_DEFENSE_TIME				   = 0.1f;
+const float  Shield::COLLIDE_RADIUS					   = 50.0f;
+const float  Shield::COLLIDE_HEIGHT					   = 125.0f;
+const float  Shield::INCREMENT_TRUNK_POINT			   = 10.0f;
+const float  Shield::DECREMENT_TRUNK_POINT			   = 1.0f;
 
 /// <summary>
 /// コンストラクタ
@@ -42,7 +45,7 @@ void Shield::Initialize(EffectManager* inEffectManager)
 {
 	effectManager = inEffectManager;
 
-	hitPoint = MAX_HITPOINT;
+	trunkPoint = 0.0f;
 	// モデルの読み込み
 	modelHandle = MV1DuplicateModel(ModelManager::GetInstance().GetModelHandle(ModelManager::SHIELD));
 	MV1SetScale(modelHandle, INITIAL_SCALE);
@@ -138,7 +141,35 @@ void Shield::Draw()
 /// 他のキャラクターと接触した
 /// </summary>
 /// <param name="forceDirection"></param>
-void Shield::HitOtherCharacter()
+void Shield::HitOtherCharacter(float magnification)
+{
+
+	// "ジャストガード"かどうかでエフェクトを変更する
+	if (isJust())
+	{
+		// ガードエフェクトを生成
+		effectManager->CreateSparkEffect(position);
+	}
+	else
+	{
+		// ガードエフェクトを生成
+		effectManager->CreateSparkEffect(position);
+	}
+
+	// 耐久値を増加させる
+	// 最大値まで達した場合は破壊する
+	if (IncrementTrunkPoint(magnification))
+	{
+		state = State::DESTRUCTION;
+		pUpdate = &Shield::UpdateDestruction;
+	}
+}
+
+/// <summary>
+/// 敵が発射した弾と接触した
+/// </summary>
+/// <param name="magnification"></param>
+void Shield::HitBullet(float magnification)
 {
 	// "ジャストガード"かどうかでエフェクトを変更する
 	if (isJust())
@@ -148,9 +179,17 @@ void Shield::HitOtherCharacter()
 	}
 	else
 	{
+		// ガードエフェクトを生成
 		effectManager->CreateSparkEffect(position);
 	}
 
+	// 耐久値を増加させる
+	// 最大値まで達した場合は破壊する
+	if (IncrementTrunkPoint(magnification))
+	{
+		state = State::DESTRUCTION;
+		pUpdate = &Shield::UpdateDestruction;
+	}
 }
 
 /// <summary>
@@ -187,7 +226,9 @@ void Shield::SetShieldPosition(const VECTOR& inPosition, const VECTOR& inDirecti
 {
 	position = inPosition;
 	direction = inDirection;
+
 	distanceToPlayer = VScale(direction, SCALE_BY_DIRECTION_FOR_CORRECTION);
+
 	position = VAdd(position, distanceToPlayer);
 	// 当たり判定球の高さを調節する
 	collisionSphere.worldCenter.y = COLLIDE_HEIGHT;
@@ -218,5 +259,49 @@ void Shield::UpdateDeployment()
 /// </summary>
 void Shield::UpdateDestruction()
 {
+	if (DecrementTrunkPoint())
+	{
+		state = State::NONE;
+	}
+}
 
+/// <summary>
+///  シールドの耐久値を増加させる
+/// </summary>
+/// <param name="magnification">増加倍率</param>
+/// <returns>最大値まで増加した（破壊された）</returns>
+bool Shield::IncrementTrunkPoint(float magnification)
+{
+	// 耐久値を攻撃種類ごとの倍率に合わせて減少させる
+	trunkPoint += INCREMENT_TRUNK_POINT * magnification;
+	// 耐久値が最大値までの増加した場合は値が最大値を上回らないようにする
+	if (trunkPoint >= MAX_TRUNK_POINT)
+	{
+		trunkPoint = MAX_TRUNK_POINT;
+		return true;
+	}
+
+	return false;
+}
+
+/// <summary>
+/// シールドの耐久値を減少させる
+/// </summary>
+/// <returns> 0 になった</returns>
+bool Shield::DecrementTrunkPoint()
+{
+	// こちらは常時減り続けるものなので deltaTime を使用
+
+
+	float deltaTime = DeltaTime::GetInstance().GetDeltaTime();
+	// 値を減少させる
+	trunkPoint -= DECREMENT_TRUNK_POINT * deltaTime;
+	// 値が 0 になったら、これ以上減らないようにする
+	if (trunkPoint <= 0.0f)
+	{
+		trunkPoint = 0.0f;
+		return true;
+	}
+
+	return false;
 }

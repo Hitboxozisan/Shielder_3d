@@ -10,11 +10,12 @@ class Player;
 class Boss;
 class Bullet;
 class BulletCreater;
-class Sword;
+class EnemyManager;
 class Camera;
 class EffectManager;
 class Field;
 class UiManager;
+class Background;
 class HitChecker;
 
 class GameMain final : public SceneBase
@@ -58,11 +59,12 @@ private:
 	Player *player;
 	Boss* boss;
 	BulletCreater* bulletCreater;
-	Sword* sword;
 	Camera* camera;
 	EffectManager* effectManager;
+	EnemyManager* enemyManager;
 	Field* field;
 	UiManager* uiManager;
+	Background* background;
 	HitChecker* hitChecker;
 
 	//std::vector<BackgroundMeteor*> activeBackgroundMeteor;

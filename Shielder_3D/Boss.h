@@ -65,6 +65,7 @@ public:
 	const State GetCurrentState();		// 現在のステータスを返す
 	const float GetHitPoint();			// 現在のHitPointを返す
 	const float GetTrunkPoint();		// 現在のTrunkPointを返す
+	const float GetMagnification();		// 現在のシールド減少倍率を返す
 	const float GetCollideRadius();		// 当たり判定球半径を返す
 private:
 	static const VECTOR INITIAL_POSITION;			// 初期位置
@@ -89,6 +90,12 @@ private:
 	static const int    ASSAULT_TIME;				// 突進回数
 	static const int	SHOT_TIME;					// 発射回数
 
+	// 湧き位置
+	static const VECTOR POP_POSITION_0;
+	static const VECTOR POP_POSITION_1;
+	static const VECTOR POP_POSITION_2;
+	static const VECTOR POP_POSITION_3;
+	
 	int	   assaultTime;					// 突進回数
 	int	   shotTime;					// 発射回数
 	float  hitPoint;					// 体力
@@ -98,6 +105,8 @@ private:
 	VECTOR startAssaultPosition;		// 突進開始位置
 	VECTOR force;						// 加わる力（跳ね返るときに主に使用）
 	VECTOR jumpForce;					// ジャンプ力
+	int prevPopPosition;				// 前回の湧き位置
+	std::vector<VECTOR> popPosition;	// 湧き位置
 
 	Player* player;						// Playerクラスのポインタ
 	EffectManager* effectManager;		// EffectManagerクラスのポインタ

@@ -15,9 +15,10 @@
 #include "EffectManager.h"
 #include "Bullet.h"
 #include "BulletCreater.h"
-#include "Sword.h"
+#include "EnemyManager.h"
 #include "ModelManager.h"
 #include "UiManager.h"
+#include "Background.h"
 #include "HitChecker.h"
 #include "Random.h"
 
@@ -66,12 +67,8 @@ void GameMain::Initialize()
 	// カメラクラス
 	camera = new Camera();
 	
-	// ソードクラス
-	sword = new Sword();
-	sword->Initialize();
-
 	// プレイヤークラス
-	player = new Player(camera, sword);
+	player = new Player(camera);
 	player->Initialize(effectManager);
 
 	// ボスクラス
@@ -96,6 +93,9 @@ void GameMain::Initialize()
 	uiManager = new UiManager();
 	uiManager->Initialize();
 
+	background = new Background();
+	background->Initialize();
+
 	// 当たり判定クラス
 	hitChecker = new HitChecker();
 }
@@ -119,10 +119,9 @@ void GameMain::Activate()
 	camera->Activate(player->GetPosition(),
 					 boss->GetPosition());			// カメラクラス活性化処理
 
-	sword->Activate(player->GetPosition(),
-					player->GetDirection());		// ソードクラス活性化処理
+	
 	//effectManager->Activate(player->GetPosition());	// エフェクト管理クラス活性化処理
-	uiManager->Activate();							// Ui管理クラス活性化処理
+	uiManager->Activate();								// Ui管理クラス活性化処理
 
 	frame = 0;
 	alpha = 0;
@@ -176,6 +175,8 @@ void GameMain::Draw()
 {
 	// Effekseer描画のため適当な画像を描画する
 	DrawGraph(0.0f, 0.0f, playGraphicHandle, FALSE);
+	// 背景映像描画
+	background->Draw();
 
 	field->Draw();
 	// エフェクト描画
@@ -185,8 +186,7 @@ void GameMain::Draw()
 	player->Draw();
 	// エネミー描画
 	boss->Draw();
-	// ソード描画
-	sword->Draw();
+	
 	// 攻撃用弾描画
 	for (auto itr = activeBullet.begin(); itr != activeBullet.end(); ++itr)
 	{
@@ -232,10 +232,26 @@ void GameMain::Draw()
 		DrawFormatStringToHandle(950, 560, GetColor(255, 255, 255), fontHandle, "%d", trunkScore);
 		DrawFormatStringToHandle(950, 870, GetColor(255, 255, 255), fontHandle, "%d", totalScore);
 	}
+
+#ifdef DEBUG
+	// デバッグ情報
+	DrawFormatString(50.0f, 50.0f, GetColor(255, 255, 255), "PlayerX: %f", player->GetPosition().x);
+	DrawFormatString(50.0f, 70.0f, GetColor(255, 255, 255), "PlayerZ: %f", player->GetPosition().z);
+#endif // DEBUG
+
+	
 }
 
 void GameMain::UpdateStart()
 {
+	camera->Update(player->GetPosition(),
+				   boss->GetPosition());
+	// 初期位置にカメラが移動したらゲームを開始する
+	if (camera->IsMovedCameraToInitialPosition())
+	{
+		state = State::GAME;
+		pUpdate = &GameMain::UpdateGame;
+	}
 }
 
 void GameMain::UpdateGame()
@@ -274,14 +290,14 @@ void GameMain::UpdateGame()
 		
 	}
 
-	sword->Update();
 
 	// 当たり判定処理
 	// 盾の処理をどうにかしたい
 	// 盾は盾で個別に処理するべきか？
 	hitChecker->Check(player,
 					  player->GetShieldPointer(),
-					  boss);
+					  boss,
+					  &activeBullet);
 
 	// エフェクト更新処理
 	effectManager->Update(player->GetPosition(),
@@ -293,6 +309,7 @@ void GameMain::UpdateGame()
 		state = State::GAME_OVER;
 		pUpdate = &GameMain::UpdateGameOver;
 	}
+
 }
 
 /// <summary>
