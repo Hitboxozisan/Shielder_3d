@@ -11,6 +11,7 @@ const float SmokeEffect::INCREASE_SIZE = 0.8f;
 /// </summary>
 SmokeEffect::SmokeEffect()
 {
+	// ˆ—‚È‚µ
 }
 
 /// <summary>
@@ -18,6 +19,7 @@ SmokeEffect::SmokeEffect()
 /// </summary>
 SmokeEffect::~SmokeEffect()
 {
+	// ˆ—‚È‚µ
 }
 
 /// <summary>

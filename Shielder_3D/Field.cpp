@@ -35,5 +35,6 @@ void Field::Initialize()
 /// </summary>
 void Field::Draw()
 {
+	// 3Dƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(modelHandle);
 }

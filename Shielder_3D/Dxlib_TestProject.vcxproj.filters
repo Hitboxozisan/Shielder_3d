@@ -176,6 +176,9 @@
     <ClCompile Include="EffectFieldBackground.cpp">
       <Filter>ソース ファイル\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="EffectFootprints.cpp">
+      <Filter>ソース ファイル\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
@@ -304,5 +307,6 @@
     <ClInclude Include="EffectFieldBackground.h">
       <Filter>ソース ファイル\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="EffectFootprints.h" />
   </ItemGroup>
 </Project>

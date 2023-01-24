@@ -6,12 +6,14 @@
 #include "DamageEffect.h"
 #include "PlayerDiedEffect.h"
 #include "SmokeEffect.h"
+#include "EffectFootprints.h"
 #include "ChargeEnergyEffect.h"
 #include "EffectFieldBackground.h"
 #include "EffectTeleport.h"
 
 const int EffectManager::SMOKE_EFFECT_AMOUNT  = 16;
 const int EffectManager::ENERGY_EFFECT_AMOUNT = 64;
+const int EffectManager::FOOTPRINTS_EFFECT_AMOUNT = 16;
 
 const float EffectManager::SMOKE_EFFECT_SIZE = 15.0f;
 
@@ -22,16 +24,25 @@ const std::string EffectManager::SPARK_EFFECT_PATH			= "Data/Effect/blow.efkefc"
 const std::string EffectManager::DAMAGE_EFFECT_PATH			= "Data/Effect/damage.efkefc";
 const std::string EffectManager::RIGOR_EFFECT_GRAPHIC_PATH  = "Data/Effect/smoke.png";
 const std::string EffectManager::ENERGY_EFFECT_GRAPHIC_PATH = "Data/Effect/energy.png";
+const std::string EffectManager::FOOTPRINTS_EFFECT_GRAPHIC_PATH = "Data/Effect/footprints.png";
 
-
+/// <summary>
+/// コンストラクタ
+/// </summary>
 EffectManager::EffectManager()
 {
 }
 
+/// <summary>
+/// デストラクタ
+/// </summary>
 EffectManager::~EffectManager()
 {
 }
 
+/// <summary>
+/// 初期化処理
+/// </summary>
 void EffectManager::Initialize()
 {
 	//画像読み込み
@@ -83,6 +94,9 @@ void EffectManager::Initialize()
 	}
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void EffectManager::Finalize()
 {
 	for (int i = 0; i < EFFECT_AMOUNT; ++i)
@@ -97,6 +111,10 @@ void EffectManager::Finalize()
 	}
 }
 
+/// <summary>
+/// 活性化処理
+/// </summary>
+/// <param name="inPosition"></param>
 void EffectManager::Activate(VECTOR inPosition)
 {
 	for (int i = 0; i < EFFECT_AMOUNT; ++i)
@@ -105,6 +123,9 @@ void EffectManager::Activate(VECTOR inPosition)
 	}
 }
 
+/// <summary>
+/// 非活性化処理
+/// </summary>
 void EffectManager::Deactivate()
 {
 	for (int i = 0; i < EFFECT_AMOUNT; ++i)
@@ -145,8 +166,6 @@ void EffectManager::Draw(const VECTOR& inPosition)
 	int itr = 0;
 	int length = 0;
 
-
-
 	for (int i = 0; i < EFFECT_AMOUNT; ++i)
 	{
 		effects[i]->Draw();
@@ -159,6 +178,10 @@ void EffectManager::Draw(const VECTOR& inPosition)
 	}
 }
 
+/// <summary>
+/// スパークエフェクトを発生させる
+/// </summary>
+/// <param name="inPosition"></param>
 void EffectManager::CreateSparkEffect(const VECTOR& inPosition)
 {
 	if (effects[SPARK]->GetExist() == false)
@@ -216,6 +239,34 @@ void EffectManager::CreateSmokeEffect(const VECTOR& inPosition)
 	}
 }
 
+/// <summary>
+/// 足跡エフェクトを発生させる
+/// </summary>
+/// <param name="inPosition"></param>
+void EffectManager::CreateFootprintsEffect(const VECTOR& inPosition)
+{
+	int itr = SMOKE_EFFECT_AMOUNT;
+	int length = itr + FOOTPRINTS_EFFECT_AMOUNT;
+
+	for (; itr < length; ++itr)
+	{
+		if (graphicEffects[itr]->GetExist())
+		{
+			++itr;
+		}
+		else
+		{
+			graphicEffects[itr]->Activate(inPosition, 100.0f);
+			return;
+		}
+	}
+
+}
+
+/// <summary>
+/// ダメージエフェクトを発生させる
+/// </summary>
+/// <param name="inPosition"></param>
 void EffectManager::CreateDamageEffect(const VECTOR& inPosition)
 {
 	if (effects[DAMAGE]->GetExist() == false)

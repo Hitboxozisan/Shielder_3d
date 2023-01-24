@@ -33,6 +33,8 @@ public:
 	void CreateSparkEffect(const VECTOR& inPosition);		// 火花を生成する
 	void CreateEnergyEffect(const VECTOR& inPosition);		// 粒子を生成する
 	void CreateSmokeEffect(const VECTOR& inPosition);		// 煙を生成する
+	void CreateFootprintsEffect(const VECTOR& inPosition);	// 足跡を生成する
+
 	void CreateDamageEffect(const VECTOR& inPosition);		// ダメージエフェクトを生成する
 	void CreatePlayerDiedEffect(const VECTOR& inPosition);	// プレイヤー死亡エフェクトを生成する
 	void CreateRecoveryEffect(const VECTOR& inPosition);	// プレイヤー回復エフェクトを生成する
@@ -50,9 +52,11 @@ private:
 	static const std::string DAMAGE_EFFECT_PATH;
 	static const std::string RIGOR_EFFECT_GRAPHIC_PATH;
 	static const std::string ENERGY_EFFECT_GRAPHIC_PATH;
+	static const std::string FOOTPRINTS_EFFECT_GRAPHIC_PATH;
 
 	static const int SMOKE_EFFECT_AMOUNT;
 	static const int ENERGY_EFFECT_AMOUNT;
+	static const int FOOTPRINTS_EFFECT_AMOUNT;
 
 	// 画像エフェクトサイズ（これは各エフェクトのほうで指定すべきと思う）
 	static const float SMOKE_EFFECT_SIZE;
@@ -64,7 +68,8 @@ private:
 	EffectBase* effects[EFFECT_AMOUNT];
 	BillboardBase** graphicEffects;
 
-	int smokeGraphicHandle;
-	int energyGraphicHandle;
+	int smokeGraphicHandle;				// 煙エフェクト画像
+	int energyGraphicHandle;			// 粒子エフェクト画像
+	int footprintsGraphicHandle;		// 足跡エフェクト画像
 };
 

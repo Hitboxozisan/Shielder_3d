@@ -68,6 +68,7 @@ public:
 	const float GetTrunkPoint();		// 現在のTrunkPointを返す
 	const float GetMagnification();		// 現在のシールド減少倍率を返す
 	const float GetCollideRadius();		// 当たり判定球半径を返す
+
 private:
 	static const VECTOR INITIAL_POSITION;			// 初期位置
 	static const VECTOR INITIAL_DIRECTION;			// 初期向き

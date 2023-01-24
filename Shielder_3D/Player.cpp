@@ -162,6 +162,7 @@ void Player::Draw()
 	{
 		shield->Draw();
 	}
+
 #ifdef DEBUG
 	//当たり判定デバック描画
 	//DrawSphere3D(collisionSphere.worldCenter, collisionSphere.radius,
@@ -369,6 +370,8 @@ void Player::Move()
 			speed = 0.0f;
 		}
 	}
+
+	
 
 	// フィールド外に出ないようにする
 	if (IsOutField())
